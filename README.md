@@ -1,13 +1,14 @@
 ## Title: Go-lang Study
-### Goal: Trying out go features and example
+### Goal: Trying out Go features and example
 ### Content:
 1. Simple Go application
-2. Simple game, like: word making/spelling
-3. File IO check
-4. DB CRUD example, SQL and NoSQL DB
-5. Batch processing
-7. OAuth intregation
-8. Web intregation
-9. Non blocking actions
-10. AI implementation
-11. Cloud intregation
+1. Simple number algorithm implementation, like GCD, Fibbonacci, etc.
+1. Simple game, like: word making/spelling, number matching
+1. File IO check
+1. DB CRUD example, SQL and NoSQL DB
+1. Batch processing
+1. OAuth intregation
+1. Web intregation
+1. Non blocking actions
+1. AI implementation
+1. Cloud intregation
