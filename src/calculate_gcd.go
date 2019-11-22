@@ -3,7 +3,7 @@ type GCD struct {
   second int64
 }
 
-func (numbers *GCD) CalculateGcd() int64 {
+func (numbers *GCD) Calculate() int64 {
     divisor := getMin(numbers)
     divident := getMax(numbers)
     if(divident % divisor == 0) {
