@@ -1,33 +1,37 @@
+package main
+
+// "Combination structure for generate combinations"
 type Combination struct {
-  given [45]int
-  place int
+  n int
+  r int
 }
 
 func (c *Combination) helper(combinations [][]int, data []int, start int, end int, index int) {
-    if (index == data.length) {
-        add(combinations, clone(data))
+    if (index == len(data)) {
+        c.add(combinations, c.clone(data))
     } else if (start <= end) {
         data[index] = start
-        helper(combinations, data, start + 1, end, index + 1)
-        helper(combinations, data, start + 1, end, index)
+        c.helper(combinations, data, start + 1, end, index + 1)
+        c.helper(combinations, data, start + 1, end, index)
     }
 }
 
 func (c *Combination) add(combinations [][]int, data []int) {
-    combinations[combinations.length] := clone(data)   
+    append(combinations, c.clone(data))   
 }
 
 func (c *Combination) clone(data []int) []int {
-    buffer [data.length]int
-    for index :=0; index < data.length; index++ {
+    buffer := make([]int, len(data))
+    for index := 0; index < len(data); index++ {
         buffer[index] := data[index]
     }
     return buffer
 }
 
-func (c *Combination) Generate(n int, r int) [][]int {
-    combinations [][r]int
-    data [r]int
-    helper(combinations, data, 0, n-1, 0)
+// "Generate combination of numbers"
+func (c *Combination) Generate() [][]int { 
+    combinations := [][]int {}
+    data := make([]int, c.r)
+    c.helper(combinations, data, 0, (c.n - 1), 0)
     return combinations
 }
