@@ -23,7 +23,7 @@ func (c *Combination) add(combinations [][]int, data []int) {
 func (c *Combination) clone(data []int) []int {
     buffer := make([]int, len(data))
     for index := 0; index < len(data); index++ {
-        buffer[index] := data[index]
+        buffer[index] = data[index]
     }
     return buffer
 }
