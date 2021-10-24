@@ -1,0 +1,39 @@
+@startuml
+autonumber
+commchat <--> wallet_bridge : Enter wallet operation
+alt  account create: while not exist
+    commchat -> wallet_bridge : Initiate account
+    wallet_bridge <-> upay_api : Initiate account
+    wallet_bridge --> kafka_stream : Push: Activity
+    kafka_stream --> wallet_db: Pop: Store activity
+    kafka_stream --> analytic_db  : Pop: Store activity
+    kafka_stream --> tcash_app : Pop: Store activity
+    commchat <- wallet_bridge : Account response
+else  account select: from existing
+    commchat -> wallet_bridge : Select account
+    wallet_bridge <-> upay_api : Verify account
+    wallet_bridge --> kafka_stream : Push: Activity
+    kafka_stream --> wallet_db: Pop: Store activity
+    kafka_stream --> analytic_db  : Pop: Store activity
+    kafka_stream --> tcash_app : Pop: Store activity
+    commchat <- wallet_bridge : Account response
+end
+alt Authentication
+    commchat -> wallet_bridge : Authentication Request
+    wallet_bridge <-> upay_api : Authentication Request
+    wallet_bridge --> kafka_stream : Push: activity
+    kafka_stream --> wallet_db: Pop: Store activity
+    kafka_stream --> analytic_db  : Pop: Store activity
+    kafka_stream --> tcash_app : Pop: Store activity
+    commchat <- wallet_bridge : Authentication Response
+end
+alt Specific Operation
+    commchat -> wallet_bridge : API calling
+    wallet_bridge --> kafka_stream : Push: activity
+    kafka_stream --> wallet_db: Pop: Store
+    kafka_stream --> analytic_db  : Pop: Store
+    kafka_stream --> tcash_app : Pop: Store
+    commchat <- wallet_bridge : API response
+end
+commchat <--> wallet_bridge : Exit wallet operation
+@enduml

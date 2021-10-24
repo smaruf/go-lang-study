@@ -1,0 +1,77 @@
+@startuml
+nwdiag {
+    group {
+        color = "blue"
+        gateway;
+        core_wallet;
+        core_account;
+        core_search;
+    }
+
+    network external {
+        external;
+        gateway;
+        group {
+            color = "green"
+            external;
+            gateway;
+        }
+    }
+
+    network internal {
+        core_wallet;
+        core_account;
+        core_search;
+        group {
+            color = "green"
+            core_account;
+            core_search;
+            core_wallet;
+        }
+    }
+    gateway
+
+    network async {
+        broker;
+        message;
+        store;
+        stats;
+        ledger;
+    }
+    core_wallet
+    core_search
+    core_account
+
+    group {
+        color = "blue"
+        broker;
+        store;
+        stats;
+        message;
+        ledger;
+    }
+
+    group {
+        color = "violet"
+        store;
+        stats;
+        message;
+        ledger;
+    }
+
+    network external {
+        sms;
+        email;
+        mobile;
+    }
+    message
+
+    group {
+        color = "blue"
+        message;
+        mobile;
+        sms;
+        email;
+    }
+}
+@enduml

@@ -1,0 +1,37 @@
+@startuml
+autonumber
+ExternalService -> WGateway : Trxn Confirm: PIN
+WGateway -> WalletService : Trxn Confirm: PIN
+WalletService -> WQueue : logging
+WalletService -> WPin : Trxn Confirm: PIN
+WPin -> WPin : Verify Trxn
+alt
+    WPin <-> WCache : Pop PIN and Count
+    WPin -> WPin : Validate PIN
+    alt
+        WPin -> WTrxn : Process: if success
+        WTrxn -> WTrxn : Process: updates
+        WTrxn -> WPin : Trxn Info: if success
+        WalletService <- WPin : Trxn Info
+        WalletService -> WQueue : Push Topics
+        WQueue -> WQueue : Pop: process
+        WGateway <- WalletService : Trxn Info
+        ExternalService <- WGateway : Trxn Info
+    else
+        WPin -> WPin : Lock or Retry : if failed
+        WPin -> WCache : Push PIN and Count
+        WPin -> WQueue : Push PIN
+        WQueue -> WMsg : Pop: Send PIN
+        WQueue -> WQueue : logging
+        WPin -> WalletService : retry or locked
+        WalletService -> WGateway : retry or locked
+        WGateway -> ExternalService : retry or locked
+    end
+else
+    WPin -> WalletService : Failed: if invalid Trxn
+    WalletService -> WQueue : Push Topic: invalid Trxn
+    WQueue -> WQueue : Pop: logging
+    WalletService -> WGateway : Failed: invalid Trxn
+    WGateway -> ExternalService : Failed: invalid Trxn
+end
+@enduml

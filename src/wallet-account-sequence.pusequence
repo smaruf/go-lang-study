@@ -1,0 +1,33 @@
+@startuml
+autonumber
+ExternalService -> WGateway : Create Account
+WGateway -> WalletService : Create Account
+WalletService -> WQueue : Send for logging: no return
+WQueue -> WQueue: Pop: logging
+WalletService -> WAccount : Create Account
+WAccount -> WAccount : Check Account Exists or Not
+WAccount -> MemoryDb : Create Account
+MemoryDb -> WAccount : Success or Failure
+WAccount -> Cache : Set metadata if success
+WAccount -> WalletService : Return Success or Failure
+WalletService -> WQueue : Push Topics: no return
+WQueue -> WMsg : Pop: Notify
+WQueue -> StoreDb : Pop: Store, Logging
+WQueue -> StatsDb : Pop: Update States
+WQueue -> TCash : Pop: Create Account
+WQueue -> WQueue : Pop: logging
+WalletService -> WGateway : Account-Info
+WGateway -> ExternalService : Account-info
+
+ExternalService -> WGateway : Search Account
+WGateway -> WalletService : Search Account
+WalletService -> WQueue : Push Topic: no return
+WQueue -> WQueue : logging
+WalletService <-> Cache: Search Account
+Cache -> WAccount : Search Account: not in cache
+WAccount <-> MemoryDb : Search Account: return info
+WAccount -> Cache : return info
+Cache -> WalletService : return info
+WalletService -> WGateway : return account-info
+WGateway -> ExternalService: return account-info
+@enduml

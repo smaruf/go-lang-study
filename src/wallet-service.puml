@@ -1,0 +1,108 @@
+@startuml
+'https://plantuml.com/object-diagram
+
+map WPin {
+}
+map WAccount {
+}
+map WTrx {
+}
+map WQuery {
+}
+map MemoryDb {
+}
+map Sms {
+}
+map Email {
+}
+map Push {
+}
+map WMsg {
+    Push *--> Push
+    Sms *--> Sms
+    Email *--> Email
+}
+map WGateway {
+}
+map StatsDb {
+}
+map StoreDb {
+}
+map TCash {
+}
+map WQueue {
+    Store *--> StoreDb
+    Stats *--> StatsDb
+    TCash *--> TCash
+    Msg *--> WMsg
+}
+map WReport {
+}
+map WAnalytic {
+}
+map WMng {
+}
+map Cache {
+}
+map ExternalService {
+}
+
+
+map WalletService {
+ Account *-> WAccount
+ Transaction *--> WTrx
+ Query *---> WQuery
+ Stream *--> WQueue
+ Report *--> WReport
+ Management *--> WMng
+ Cache *--> Cache
+ Analytic *--> WAnalytic
+}
+
+'flow of microservice calling
+ExternalService --> WGateway
+WGateway --> WalletService
+WQueue --> StatsDb
+WQueue --> StoreDb
+WQueue --> TCash
+WQueue --> WMsg
+
+WAccount --> MemoryDb
+WAccount --> Cache
+WAccount --> WalletService::Stream
+
+WQuery --> WAccount
+WQuery --> MemoryDb
+WQuery --> Cache
+WQuery --> WalletService::Stream
+
+WPin --> WAccount
+WPin --> Cache
+WPin --> MemoryDb
+WPin --> WalletService::Stream
+
+WTrx --> WAccount
+WTrx --> WPin
+WTrx --> MemoryDb
+WTrx --> Cache
+WTrx --> WalletService::Stream
+
+MemoryDb --> WalletService::Stream
+
+WReport --> StatsDb
+WReport --> WQueue::Msg
+WReport --> WalletService::Stream
+
+WAnalytic --> StatsDb
+WAnalytic --> StoreDb
+WAnalytic --> WQueue::Msg
+WAnalytic --> WalletService::Stream
+
+WMng --> WReport
+WMng --> WAccount
+WMng --> WQuery
+WMng --> WTrx
+WMng --> WPin
+WMng --> Cache
+WMng --> WalletService::Stream
+@enduml

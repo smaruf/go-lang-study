@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "./proto;proto";
+
+service WalletApi {
+  rpc CallApi(ApiParameters) returns (Message) {}
+}
+
+message ApiParameters {
+  string uri = 1;
+  ApiType type = 2;
+  string token = 3;
+  string code = 5;
+  string data = 6;
+}
+
+enum ApiType {
+  Wallet = 0;
+  Agent = 1;
+  Manage = 99;
+  System = 100;
+}
+
+message Message {
+  string msg = 1;
+  string err = 2;
+  uint32 code = 3;
+  bool valid = 4;
+  bool exist = 5;
+  string data = 6;
+}

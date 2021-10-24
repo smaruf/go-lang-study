@@ -1,0 +1,44 @@
+@startuml
+autonumber
+ExternalService -> WGateway : Trxn Req
+WGateway -> WalletService : Trxn Req
+WalletService -> WQueue : logging
+WQueue -> WQueue : logging
+WalletService -> WAccount: Checking Accounts
+WAccount -> WAccount : Check account exists and valid
+WAccount -> WalletService : Success or Failure
+WalletService -> WTrxn : Process transaction
+WTrxn -> WTrxn : Start Session
+WCache -> WAccount : Check balance
+WAccount <-> MemoryDb : Search Account with balance
+WCache <- WAccount : return account balance
+WTrxn -> WTrxn : Lock Account: Source locking for debit
+WTrxn -> WPin : Check Trxn PIN
+WPin <-> WAccount : Get Trxn PIN
+WPin -> WPin : Check PIN
+WTrxn <- WPin : success or failure
+WTrxn <-> MemoryDb : Set Trxn as pending
+WTrxn -> WPin: Init confirmation(OTP or no-OTP)
+WTrxn -> WalletService : return pending Trxn Info
+WalletService -> WQueue : logging
+WQueue -> WQueue : logging
+WalletService -> WGateway : return pending Trxn Info
+WGateway -> ExternalService : return pending Trxn Info
+ExternalService -> WGateway : Confirm Trxn(OTP or no-OTP)
+WGateway -> WalletService : Confirm Trxn(OTP or no-OTP)
+WalletService -> WPin : Confirm Trxn(OTP or no-OTP)
+WPin -> WPin : Complete Confirmation(OTP or no-OTP)
+WPin -> WTrxn : Confirm Trxn
+WTrxn <-> MemoryDb : Confirm Trxn
+WTrxn <- WTrxn : Unlock Account, Session End
+WalletService <- WTrxn : Trxn Info
+WalletService -> WQueue : Push Topics: no return
+WQueue -> WAccount : Update Account Info with balance
+WQueue -> WQueue : logging
+WQueue -> WMsg : Pop: Trxn Info
+WQueue -> StoreDb : Pop: Trxn Info
+WQueue -> StatsDb : Pop: Trxn Info
+WQueue -> TCash: Pop: Trxn req
+WGateway <- WalletService : Trxn Info
+ExternalService <- WGateway : Trxn Info
+@enduml

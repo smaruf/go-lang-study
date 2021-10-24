@@ -1,0 +1,65 @@
+@startuml
+autonumber
+alt Pre-Authentication
+    External -> Gateway : Authentication: [REST]
+    Gateway -> Gateway : Authenticate: [REST]
+    External <- Gateway : Authenticate Response: [REST]
+    Gateway -> Broker : Push Access Log: [Async]
+
+    alt Account Creation
+        Gateway <-> Wallet : Account Creation: [gRPC]
+        Wallet <-> Account : Create Account: [gRPC]
+        Account -> Search : Check Existed: [gRPC]
+        Account -> Account : Create
+        Account -> Broker : Push: [Async]
+        Broker -> Store : Pop: [Async]
+        Broker -> Ledger : Pop: [Async]
+        Broker -> Message : Pop: [Async]
+        Broker -> Stats : Pop: [Async]
+        External <- Gateway : Account Response
+    end
+    alt Account Search
+        External -> Gateway : Search Account: [REST]
+        Gateway <-> Wallet : Search Account: [gRPC]
+        Wallet <-> Search : Search Account: [gRPC]
+        Wallet -> Broker : Push: [Async]
+        Broker -> Store : Pop: [Async]
+        Broker -> Message : Pop: [Async]
+        Broker -> Stats : Pop: [Async]
+        External <- Gateway : Search Response: [REST]
+    end
+    alt Transaction
+        External -> Gateway : Initiate Transaction: [REST]
+        Gateway <-> Wallet : Initiate Transaction: [gRPC]
+        Wallet <-> Account : Initiate Transaction: [gRPC]
+        Account -> Broker : Push: [Async]
+        Broker -> Message : Pop: [Async]
+        External <- Gateway : Initiate Response: [REST]
+        alt Confirm Transaction
+            External -> Gateway : Confirm Transaction: [REST]
+            Gateway <-> Wallet : Confirm Transaction: [gRPC]
+            Wallet <-> Account : Confirm Transaction: [gRPC]
+            Account -> Broker : Push: [Async]
+            Broker -> Store : Pop: [Async]
+            Broker -> Ledger : Pop: [Async]
+            Broker -> Message : Pop: [Async]
+            Broker -> Stats : Pop: [Async]
+            External <- Gateway : Response Confirm: [REST]
+        end
+    end
+    alt Search History
+        External -> Gateway : Search History: [REST]
+        Gateway <-> Wallet : Search History: [gRPC]
+        Wallet <-> Search : Search History: [gRPC]
+        Search <-> Store : Search History: [DB/Cache]
+        Wallet -> Broker : Push: [Async]
+        Broker -> Store : Pop: [Async]
+        Broker -> Stats : Pop: [Async]
+        External <- Gateway : Search Response: [REST]
+    end
+else Post-Operation
+    Gateway -> Broker : Push Operation End: [Async]
+    Broker -> Store : Pop Operation: [Async]
+    Broker -> Stats : Pop Operation: [Async]
+end
+@enduml

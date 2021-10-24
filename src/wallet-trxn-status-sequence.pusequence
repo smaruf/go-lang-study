@@ -1,0 +1,16 @@
+@startuml
+autonumber
+WalletService -> WTrxn : Trxn process: lock, timer
+WTrxn -> Cache : Account Balance Check
+WTrxn -> WPin: PIN Check
+WPin <-> WAccount: Get and Check
+WTrxn <-> MemoryDb : Trxn Journal update: pending
+WTrxn -> WalletService : Trxn Info
+WalletService -> WTrxn : Trxn Confirm: PIN or no PIN
+WTrxn <-> MemoryDb : Trxn Journal update: confirm
+WTrxn <-> MemoryDb : Trxn Ledger Update: source
+WTrxn <-> MemoryDb : Trxn Ledger update: target
+WTrxn -> WQueue : Push topics: Trxn
+WQueue -> Cache : Pop: account update
+WalletService <- WTrxn : Trxn Info: unloack, stop timer
+@enduml
