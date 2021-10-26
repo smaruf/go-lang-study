@@ -1,0 +1,30 @@
+application: core_service 
+version: 1
+runtime: go116
+api_version: go1
+port: 10004
+remote_service_host: localhost:10004
+remote_account_host: localhost:10006
+remote_transfer_host: localhost:10008
+remote_search_host: localhost:10010
+remote_messaging_host: localhost:10012
+
+redis_hosts: rd:2345, rd:4567
+redis_user: abcd
+redis_password: abcd1234
+
+kafka_hosts: kafka:1234 kafka:4567
+kafka_topic_audit_tail: topic_audit_tail
+kafka_group_audit_tail: group_audit_tail
+kafka_topic_account_status: topic_account_status
+kafka_group_account_status: group_account_status
+kafka_topic_transfer_status: topic_transfer_status
+kafka_group_transfer_status: group_transfer_status
+kafka_topic_notify_status: topic_notify_status
+kafka_group_notify_status: group_notify_status
+kafka_topic_msg_status: topic_msg_status
+kafka_group_msg_status: group_msg_status
+
+handlers:
+- url: /.*
+  script: _go_app
