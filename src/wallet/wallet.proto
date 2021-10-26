@@ -1,0 +1,161 @@
+syntax = "proto3";
+
+package common;
+
+option go_package = "./proto;common";
+
+service WalletService {
+  rpc GetAccount(AccountFilter) returns (AccountInfo) {}
+  rpc CreateAccount(AccountInfo) returns (AccountInfo) {}
+  rpc CloseAccount(AccountInfo) returns (AccountInfo) {}
+  rpc CheckAccount(AccountFilter) returns (Message) {}
+  rpc GetAccountBalance(AccountFilter) returns (BalanceInfo) {}
+  rpc GetTransaction(TransactionFilter) returns (TransactionInfo) {}
+  rpc FindTransactions(TransactionFilter) returns (stream TransactionInfo) {}
+  rpc InitiateTransfer(TransactionInfo) returns (TransactionInfo) {}
+  rpc ConfirmTransfer(TransactionInfo) returns (TransactionInfo) {}
+  rpc RevertTransfer(TransactionInfo) returns (TransactionInfo) {}
+  rpc RequestTransfer(TransactionInfo) returns (Message) {}
+  rpc ResponseTransferRequest(TransactionInfo) returns (TransactionInfo) {}
+  rpc ManageAccount(AccountInfo) returns (AccountInfo) {}
+}
+
+service CoreService {
+  rpc VerifyPin(TransactionInfo) returns (Message) {}
+  rpc VerifyBalance(TransactionInfo) returns (Message) {}
+  rpc VerifyAccounts(TransactionInfo) returns (Message) {}
+  rpc VerifyAccount(AccountInfo) returns (Message) {}
+  rpc LockAccount(TransactionInfo) returns (Message) {}
+  rpc UnlockAccount(TransactionInfo) returns (Message) {}
+  rpc NotifyTransfer(TransactionInfo) returns (Message) {}
+  rpc NotifyAccount(AccountInfo) returns (Message) {}
+  rpc PushAuditTrail(Message) returns (Message) {}
+  rpc PushAccountAction(AccountInfo) returns (Message) {}
+  rpc PushTransaction(TransactionInfo) returns (Message) {}
+  rpc PushNotification(Notification) returns (Message) {}
+}
+
+message TransactionFilter {
+  string id = 1;
+  string date = 2;
+  bool debit = 3;
+  TransactionStatus status = 4;
+  string source = 5;
+  TransactionType type = 6;
+}
+enum TransactionStatus {
+  Requested = 0;
+  Confirmed = 1;
+  Processing = 2;
+  Completed = 3;
+  Reverted = 4;
+  OnHold = 5;
+}
+message TransactionInfo {
+  string id = 1;
+  string date = 2;
+  bool debit = 3;
+  TransactionStatus status = 4;
+  string source = 5;
+  string target = 6;
+  string balance = 7;
+  string previous = 8;
+  string amount = 9;
+  string pin = 10;
+  string msg = 11;
+  string err = 12;
+  TransactionType type = 13;
+  string sourceId = 14;
+  string target_id = 15;
+}
+
+enum TransactionType {
+  Account = 0;
+  Billing = 1;
+  Cash_out = 2;
+  Top_ups = 3;
+  Reverting = 98;
+  Requesting = 99;
+  Disbursement = 100;
+}
+
+message Message {
+  string msg = 1;
+  string err = 2;
+  bool exist = 3;
+  bool valid = 4;
+}
+
+message Notification {
+  string msg = 1;
+  string err = 2;
+  string source = 3;
+  string target = 4;
+  NotificationType type = 5;
+}
+
+enum NotificationType {
+  Account_Created = 0;
+  Account_Closed = 1;
+  Account_Recovered = 2;
+  Account_Settled = 3;
+  Transfer_Success = 104;
+  Transfer_Failed = 105;
+  Transfer_Reverted = 106;
+  Transfer_Requested = 107;
+  Transfer_Disbursed = 108;
+  Common_Message = 901;
+}
+
+message  BalanceInfo {
+  string id = 1;
+  string balance = 2;
+  string lastTransfer = 3;
+  string msg = 4;
+  string error = 5;
+}
+message AccountFilter {
+  string id = 1;
+  string name = 2;
+  AccountType type = 3;
+  AccountStatus status = 4;
+  string number = 5;
+}
+
+message AccountInfo {
+  string id = 1;
+  string name = 2;
+  string number = 3;
+  string balance = 4;
+  string lastTransfer = 5;
+  AccountStatus status = 6;
+  AccountType type = 7;
+  AccountAction action = 8;
+  string msg = 9;
+  string err = 10;
+  string encPin = 11;
+  string confirmEncPin = 12;
+}
+enum AccountStatus {
+  Active = 0;
+  Locked = 1;
+  Pending = 2;
+  Blocked = 98;
+  Closed = 99;
+  Settled = 100;
+}
+enum AccountType {
+  Wallet = 0;
+  Agent = 1;
+  CBS = 2;
+  Temporary = 99;
+  System = 100;
+}
+enum AccountAction {
+  View = 0;
+  Create = 1;
+  Update = 2;
+  Close = 99;
+  Settle = 100;
+}
+
