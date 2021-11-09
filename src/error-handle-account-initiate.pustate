@@ -1,0 +1,39 @@
+@startuml
+state op1 <<fork>>
+state op2 <<fork>>
+state op4 <<fork>>
+state check <<choice>> : check
+state create <<entryPoint>> : create/enroll
+state config <<entryPoint>> : after enroll/create
+state track <<entryPoint>> : audit/actions
+state account : init account
+state pin : pass/pin
+state error : panic
+state panic : system-panic
+state retry <<choice>>
+state raise <<exitPoint>> : system panic
+
+[*] --> check : Check active account
+check --> create : Not existed
+check --> config : Not configured
+check --> track : Valid account
+create --> op1 : Check creatable
+op1 --> account : Success
+op1 --> error : Failed
+account --> [*] : Notify User
+account --> config : Default config
+config --> op2 : Try to Add PIN/Pass
+op2 --> pin : Success
+op2 --> error : Failed
+error --> [*] : Show Error
+pin --> [*] : Notify User
+pin --> track : Retracking
+track --> op4 : tracking
+op4 --> [*] : Notify User/System
+op4 --> panic : Failed
+panic --> retry : Retry Queue
+retry --> [*] : Success with notify
+retry --> retry : Send again for Queue
+retry --> raise : Not possible
+raise --> [*] : Notify System
+@enduml
