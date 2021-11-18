@@ -11,7 +11,7 @@ state pin : pass/pin
 state error : panic
 state panic : system-panic
 state retry <<choice>>
-state raise <<exitPoint>> : system panic
+state raise <<exitPoint>> : system-panic
 
 [*] --> check : Check active account
 check --> create : Not existed

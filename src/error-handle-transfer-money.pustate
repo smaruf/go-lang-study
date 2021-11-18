@@ -1,0 +1,50 @@
+@startuml
+state check <<entryPoint>> : account/balance
+state op1 <<choice>> : account-status
+state err <<exitPoint>> : panic
+state locking <<entryPoint>> : locking-balance
+state op2 <<choice>> : start-transfer
+state post_process <<entryPoint>> : manage-internal
+state op3 <<choice>> : internal-external
+state op4 <<fork>> : internal-external-server: Async
+state revert <<exitPoint>> : revert operation
+state op6 <<fork>> : revert-action
+state op5 <<choice>> : confirmation
+state confirm <<entryPoint>> : Double-check
+state rev_op <<fork>> : Revert-call
+state rev_queue <<exitPoint>> : Revert-queue
+state send_failed <<exitPoints>> : Manual-operation
+state err_confirm <<fork>> : Err-Confirm
+
+[*] --> check : Account Check
+check --> op1 : Checking
+op1 --> err : Not found
+op1 --> err : Not active
+op1 --> err : Insufficient balance
+op1 --> err : Balance locked
+err --> [*] : Notify and return
+op1 --> locking : Lock and start session
+locking --> op2 : Transfer initiate
+op2 --> err : Failed remotely
+op2 --> err : Resource occupied
+op2 --> err : External/Internal service failed to start
+op2 --> post_process : External/Internal services
+post_process --> op3 : Processing internal/external
+op3 --> confirm : Successful and Notify
+confirm --> op5 : Confirmation processing
+op5 --> err_confirm : Not confirmed : Async
+op5 --> err : Timeout
+err_confirm --> err : Notify
+err_confirm --> rev_op : Revert Transfer
+op5 --> [*] : Successful and Notify
+op3 --> op4 : Failed, Revert and Notify : Async
+op4 --> [*] : Notify User
+op4 --> revert : Calling revert action
+revert --> op6 : Reverts transfer: Async
+op6 --> [*] : Notify
+op6 --> rev_op : External Calling: Async
+rev_op --> rev_queue : Failed Hopelessly: Async
+rev_queue --> rev_op : Retry periodically: Async
+rev_op --> send_failed : After retry failed: Async
+send_failed --> [*] : Notify Failed
+@enduml

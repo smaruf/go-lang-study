@@ -1,0 +1,85 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+if(any providers?) then (no)
+    stop
+else (yes)
+    :show-providers;
+endif
+:select-provider;
+if (valid provider?) then (no)
+    :return-error;
+    stop
+else (yes)
+    :fetch-channel;
+    :check-account;
+    if (configured?) then (no)
+        :initiate-account;
+        :initiate-security;
+        :sync-account;
+    endif
+    :check-balance;
+    if(enough balance?) then (yes)
+        :initiate-transfer;
+        if(account-locked?) then (yes)
+            :return-error;
+            stop
+        else (no)
+            :lock-account;
+            :start-session;
+            if(valid accounts?) then (yes)
+                :call-transfer;
+                if(success?) then (no)
+                    :show-failure;
+                    stop
+                else (yes)
+                    :show-success;
+                endif
+                :call-confirm;
+                if(confirmed?) then (yes)
+                    :call-finalize;
+                    :save-transfer;
+                    if(saved) then (yes)
+                        :show-success;
+                        :end-session;
+                        :unlock-account;
+                        stop
+                    else (no)
+                        :call-revert;
+                        if(reverted?) then (yes)
+                            :show-message;
+                        else (no)
+                            :error-queue;
+                        endif
+                            :end-session;
+                            :unlock-account;
+                         stop
+                    endif
+
+                else (no)
+                    :call-revert;
+                    if (reverted?) then (yes)
+                        :show-message;
+                    else (no)
+                        :error-queue;
+                    endif
+                    :end-session;
+                    :unlock-account;
+                    stop
+                endif
+            else (no)
+                :unlock-account;
+                :return-error;
+                stop
+            endif
+
+        endif
+    else (no)
+        :return-error;
+        stop
+    endif
+
+endif
+
+@enduml
