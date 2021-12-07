@@ -12,3 +12,6 @@
 1. Non blocking actions
 1. AI implementation
 1. Cloud intregation
+1. Micro-controller
+1. Format imput
+1. Type conversion 
