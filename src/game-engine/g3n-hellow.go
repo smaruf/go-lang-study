@@ -82,3 +82,5 @@ func main() {
 // git clone https://github.com/g3n/engine g3n-engine
 // cd g3n-engine
 // go install ./...
+// Alernatives:
+// go get -u github.com/g3n/demos/hellog3n
