@@ -1,0 +1,71 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+:Start payment;
+:Select Source and Target vendor;
+:Add Payment details;
+if (Matched Source-Vendor and Target-Vendor) then (true)
+    if (Valid Source-vendor) then (yes)
+        :Init source to merchant transfer;
+        if ( failed) then (yes)
+            :Raise error msg;
+            stop
+        else (false)
+            if (Available transfer) then (false)
+                :Revert merchant transfer;
+                :Raise error msg;
+                stop
+            else (yes)
+                :Init merchant or agent to target transfer;
+                if(failed) then (yes)
+                    :Revert merchant transfer;
+                    :Raise error msg;
+                    stop
+                else (false)
+                    :Return success msg;
+                    stop
+                endif
+            endif
+        endif
+    else (false)
+        :Raise error msg;
+        stop
+    endif
+else (false)
+    if(Valid Source-vendor) then (true)
+        if(Valid Target-vendor) then (true)
+            :Init source to merchant transfer;
+            if (failed) then (yes)
+                :Raise error msg;
+                stop
+            else (false)
+                :Select target merchant or agent;
+                if(Achievable transfer) then (yes)
+                    :Init merchant or agent to target transfer;
+                    if(failed) then (yes)
+                        :Revert merchant transfer;
+                        :Raise error msg;
+                        stop
+                    else (false)
+                        :Return success msg;
+                        stop
+                    endif
+                else (false)
+                    :Revert merchant transfer;
+                    :Raise error msg;
+                    stop
+                endif
+            endif
+        else (false)
+           :Raise error msg;
+           stop
+        endif
+    else (false)
+        :Raise error msg;
+        stop
+    endif
+
+endif
+
+@enduml
