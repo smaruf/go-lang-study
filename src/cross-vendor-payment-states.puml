@@ -1,66 +1,78 @@
 @startuml
 'https://plantuml.com/state-diagram
-state End_Point {
-    state error : panic
-    state done : success
-}
-
-[*] --> Vendor_Selection : Start payment
-
-state Vendor_Selection {
-    state Source_Vs_Target : Init payment method
-    [*] --> Source_Vs_Target : Start checking
-    Source_Vs_Target --> Cross_Check_Vendors : Add Details
-
-    state Cross_Check_Vendors {
-        state Source_Checking <<choice>> : Validity
-        state Target_Checking <<choice>> : Validity
-        state Source_Vendor : Source details
-        state Target_Vendor : Target details
-        [*] --> Source_Vendor : Check
-        Source_Vendor --> Source_Checking : Validity
-        Source_Checking --> Target_Vendor : Valid Source
-
-        Source_Checking --> error : Failed
-        Target_Vendor --> Target_Checking : Validity
-        Target_Checking --> error : Failed
-        Target_Checking --> Merchant_Payment :Success
+state Core_Payment {
+    state End_Point {
+        state error : panic
+        state done : success
     }
 
-}
-state Merchant_Payment {
-    state Transfer {
-        state valid_transfer : Amount, Trx check
-        state validity_trx <<choice>> : Validity
-        state Init_trx : Transfer Session
-        state complete <<choice>>: Transfer Complete
-        valid_transfer --> validity_trx
-        validity_trx --> error : Invalid
-        validity_trx --> Init_trx : Valid
-        Init_trx --> complete : Start Transfer
-        complete --> error : Failed
-        complete --> Target_Payment : Success
+    [*] --> Vendor_Selection : Pay
+
+    state Vendor_Selection {
+        state Source_Vs_Target : Init payment method
+        [*] --> Source_Vs_Target : Start checking
+        Source_Vs_Target --> Cross_Check_Vendors : Add Details
+
+        state Cross_Check_Vendors {
+            state Source_Checking <<choice>> : Validity
+            state Target_Checking <<choice>> : Validity
+            state Source_Vendor : Source details
+            state Target_Vendor : Target details
+            [*] --> Source_Vendor : Check
+            Source_Vendor --> Source_Checking : Validity
+            Source_Checking --> Target_Vendor : Valid Source
+
+            Source_Checking --> error : Failed
+            Target_Vendor --> Target_Checking : Validity
+            Target_Checking --> error : Failed
+            Target_Checking --> Merchant_Payment :Success
+        }
+
     }
-    state Reverting {
-        state revert<<choice>> : Transfer reverting
-        state revert_transfer : Revert flow, then Raise
-        revert --> revert_transfer : Revert process
-        revert_transfer --> error : Raise
+    state Merchant_Payment {
+        [*] --> Transfer
+        state Transfer {
+            state valid_transfer : Amount, Trx check
+            state validity_trx <<choice>> : Validity
+            state Init_trx : Transfer Session
+            state complete <<choice>>: Transfer Complete
+            valid_transfer --> validity_trx : Checking
+            validity_trx --> error : Invalid
+            validity_trx --> Init_trx : Valid
+            Init_trx --> complete : Start Transfer
+            complete --> error : Failed
+            complete --> Target_Payment : Success
+        }
+        state Reverting {
+            state revert<<choice>> : Transfer reverting
+            state revert_transfer : Revert flow, then Raise
+            state revert_op <<fork>> : Revert and Raise
+            state revert_action <<choice>> : Revert Queue
+            revert --> revert_transfer : Revert process
+            revert_transfer --> revert_op : Async
+            revert_op --> error : Raise
+            revert_op --> revert_action : Queue and Notify
+            revert_action --> done : Notify
+        }
+
+
+        state Target_Payment {
+            state valid_target : Channel, Account check
+            state validity_target <<choice>> : Validity
+            state Init_Target_trx : Transfer session
+            state Target_Trx <<choice>> : Transfer result
+            [*] --> valid_target
+            valid_target --> validity_target : Checking
+            validity_target --> revert : Invalid Transfer
+            validity_target --> Init_Target_trx : Valid Target Transfer
+            Init_Target_trx --> Target_Trx : Start Transfer
+            Target_Trx --> revert : Failed Target Transfer
+            Target_Trx --> done : Success Target Transfer
+        }
     }
+    done --> [*]
+    error --> [*]
 }
 
-state Target_Payment {
-    state valid_target : Channel, Account check
-    state validity_target <<choice>> : Validity
-    state Init_Target_trx : Transfer session
-    state Target_Trx <<choice>> : Transfer result
-    valid_target --> validity_target : Checking
-    validity_target --> revert : Invalid Transfer
-    validity_target --> Init_Target_trx : Valid Target Transfer
-    Init_Target_trx --> Target_Trx : Start Transfer
-    Target_Trx --> revert : Failed Target Transfer
-    Target_Trx --> done : Success Target Transfer
-}
-done --> [*]
-error --> [*]
+[*] --> Core_Payment : Start
 @enduml
