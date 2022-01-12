@@ -1,0 +1,69 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+:Payment;
+if (Single Channel?) then (yes)
+    :Payment.singleChannel;
+    start
+    :Payment.loadEngine;
+    :Payment.notifySuccess;
+    stop
+else (no)
+endif
+
+if (Found Engines?) then (true)
+  :Payment.loadEngines;
+  :Payment.generateHash;
+  if (Transfer?) then (no)
+    :Payment.revert;
+
+    if (Failed?) then (yes)
+        :Payment.retry;
+        if (Reached Limit?) then (yes)
+            :Payment.notify;
+            :Payment.errorQueue;
+        else (no)
+            :Payment.revert;
+        endif
+    else (no)
+        :Payment.notify;
+    endif
+    :Raise;
+    if (Continue?) then (no)
+          stop
+    else (yes)
+        :Payment.another;
+        start
+        stop
+    endif
+  else (yes)
+    :Payment.notify;
+    :Payment.initTarget;
+    :Payment.forwardTransfer;
+    if (Available?) then (yes)
+        :Payment.transfer;
+        :Payment.notifySuccess;
+        if (Continue?) then (yes)
+            :Payment.another;
+            start
+            stop
+        else (no)
+            stop
+        endif
+    else (no)
+        :Payment.notify;
+        :Payment.revert;
+        start
+        stop
+    endif
+
+  endif
+else (false)
+    :Raise;
+    stop
+endif
+
+
+
+@enduml
