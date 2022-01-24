@@ -1,0 +1,90 @@
+@startuml
+start
+:RFID reader;
+:EVI Server;
+:Decode RFID;
+:Store Tracking + Async Kafka;
+if(Process Async) then (DB)
+    if(Stored in DB?) then (yes)
+        :Log;
+        stop
+    else (no)
+        :Stored in ChachedDb;
+        start
+        :Retry;
+        stop
+    endif
+else (Kafka)
+    if (Sent?) then (yes)
+        :Async Data Fetching with Kafka;
+    else (no)
+        :Store in CachedDb;
+        start
+        :Retry;
+        stop
+    endif
+endif
+if(Already Exist and Not Expired?[Internal cache]) then(yes)
+    :Fetch from DB [Internal cache];
+else (no)
+    :Try to fetch from datahub gateway;
+    :Fetch existing auth-token [Internal cache];
+    :Fetch JobId;
+    if(Expired Token?) then (yes)
+        :Try to login;
+        :Store token;
+        start
+        :Retry Fetch JobId;
+    else (Server Exception)
+        :Retry Kafka Queue;
+        start
+        :Retry;
+        if(Failed?) then (yes)
+            :Error Queue;
+            start
+            :Manual or Schedule Retry;
+            :Log;
+            stop
+        else (no)
+            :Log;
+            stop
+        endif
+    endif
+    :Fetch Detail by JobId;
+    if(Failed?) then (yes)
+        :Retry Kafka Queue;
+        start
+        :Retry;
+        if(Failed) then (yes)
+            :Error Queue;
+            start
+            :Manual or Schedule Retry;
+            :Log;
+            stop
+        else (no)
+            :Log;
+            stop
+        endif
+    else (success)
+        :Log;
+        :Marked New Fetch;
+    endif
+endif
+:Push Kafka Queue;
+start
+:Async Consumer;
+if(New Fetched?) then (yes)
+    if(Existed?) then (yes)
+        :Update Store with Managed History;
+        :Push or Clear in Cache;
+    else (no)
+        :Store in DB;
+        :Push in Cache;
+    endif
+    :Log;
+    stop
+else (no)
+    :Log;
+    stop
+endif
+@enduml
