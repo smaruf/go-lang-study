@@ -1,6 +1,6 @@
 ## SIMULATOR PLANNING FOR SR-71 HYPERSONIC AIRCRAFT
 ### Tasks:
-1. Singne Engine simulation
+1. Single Engine simulation
 2. Double Engine simulation
 3. Avionics Simulation
 4. Fly-by-wire vs Fly-by-optics simulation
@@ -21,6 +21,7 @@
 19. Emergency escape simulation
 20. Ground control simulation
 21. Satelite input simulation
+22. Plug and Play extentions simulation
 ### Hardwares:
 1. Controllers
 2. Instruments
@@ -33,9 +34,12 @@
 9. AI Units
 10. Displays
 11. Power source
+12. Communicator
+13. Extention
 ### Software/Firmware:
 1. Engines
 2. Avionics
 3. Flying and Landing
 4. External controls
 5. Ground controls
+6. Controlling OS/Base Controller with Plug-n-Play Extension
