@@ -1,0 +1,25 @@
+#########################################################################################################################################
+BRTA Change delivery location
+
+-- Features:
+--- 1. Public portal
+--- 2. Form Approval
+--- 3. Mobile App (?)
+--- 4. Dashboard Stats (?)
+--- 5. Payment window
+
+-- Module/Repo:
+--- 1. New Spring Boot Portal (Similar to nid2-pub)
+--- 2. New Spring Boot REST API
+--- 3. Old EVR-Web for Approval
+--- 4. Android App vs PWA (?)
+--- 5. Dashboard Stats (In EVR-Web??)
+--- 6. Payment Mechanism (NID-Wallet like or Other Direct Payment Gateway?)
+
+-- Process(User):
+--- () --> User --> Public-Portal --> Form-Submit --> Rest-Service -->[Official-Approval Process]--> Notify_User --> User_Check -->(x)
+-- Process(approval):
+--- () --> Auth_User --> EVR_Web --> Approve_From --> Submit_Next... --> Approval_Complete --> Notify_User --> Start_Process -->(x)
+
+-- Notes/Q: 1. Do we have any state based flow management system? or We really need one?
+----------- 2. What payment gateway should used and How?

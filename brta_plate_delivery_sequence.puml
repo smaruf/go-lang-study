@@ -1,0 +1,36 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+User -> Portal: Authentication Request
+Portal --> User: Authentication Response
+
+User -> Portal: Submit Delivery Changes
+Portal -> Rest_Service: Check RegNo and Mobile
+Rest_Service --> Portal: If failed, then Alert
+Portal --> User: If failed, then Alert
+Rest_Service -> Portal: If Success, then Return
+Rest_Service --> Rest_Service: Process Application as Pending
+Portal --> User: Success
+User --> Wallet: Payment Charge
+Wallet --> Wallet: Process Payment
+Wallet --> Rest_Service: Success and Proceed
+Rest_Service --> Rest_Service: Process Internal and Submitted
+Rest_Service --> Notify_Service: After Success, Send Application
+Notify_Service --> Auth_User: Notify Submission
+Auth_User -> EVR_Web: Check Submission
+EVR_Web --> Rest_Service: Process Checking
+Auth_User -> EVR_Web: Approve Submission
+EVR_Web --> Rest_Service: Process Approval and Delivery
+Rest_Service --> Notify_Service: Notify User
+Notify_Service --> User: Send Notification
+User -> Portal: Authentication
+Portal --> User: Valid Authentication
+User -> Portal: Check Status
+Portal <--> Rest_Service: Collect Status
+Portal --> User: Show Status
+User --> User: If Success, Collect from location
+User --> User: If Pending, Try Later
+User --> Portal: If Denied, Try Again or Contact Office
+@enduml
