@@ -1,4 +1,6 @@
-package function
+package main
+
+import "fmt"
 
 func findNextEmpty(board [][]byte) (byte, byte, error) {
 	for j := byte(0); j < 9; j++ {
@@ -69,4 +71,35 @@ func solveSudoku(board [][]byte) {
 
 	// start backtracking
 	backtracing(j, i)
+}
+
+func printBoard(board [][]byte) {
+	for _, row := range board {
+		for ix, col := range row {
+			if ix == 8 {
+				fmt.Printf("%c\n", col)
+			} else {
+				fmt.Printf("%c ", col)
+			}
+		}
+	}
+}
+
+func main() {
+	board := [][]byte{
+		{'6', '.', '.', '.', '.', '2', '5', '.', '.'},
+		{'.', '1', '7', '5', '.', '.', '.', '.', '.'},
+		{'4', '.', '.', '.', '.', '.', '.', '2', '.'},
+		{'.', '7', '.', '.', '2', '3', '.', '6', '.'},
+		{'.', '.', '.', '.', '1', '.', '3', '.', '.'},
+		{'.', '.', '2', '.', '.', '5', '7', '.', '.'},
+		{'.', '.', '.', '4', '.', '.', '.', '.', '.'},
+		{'.', '9', '5', '.', '.', '.', '.', '3', '.'},
+		{'1', '.', '8', '.', '.', '.', '9', '.', '.'},
+	}
+	fmt.Println("Given Board:")
+	printBoard(board)
+	solveSudoku(board)
+	fmt.Println("Solved Board:")
+	printBoard(board)
 }
