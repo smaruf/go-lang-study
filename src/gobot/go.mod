@@ -26,7 +26,7 @@ require (
 	github.com/sigurn/utils v0.0.0-20190728110027-e1fefb11a144 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	go.bug.st/serial v1.3.3 // indirect
-	golang.org/x/crypto v0.0.0-20210421170649-83a5a9bb288b // indirect
+	golang.org/x/crypto v0.1.0 // indirect
 	golang.org/x/sys v0.1.0 // indirect
 	periph.io/x/periph v3.6.2+incompatible // indirect
 	tinygo.org/x/bluetooth v0.4.0 // indirect
