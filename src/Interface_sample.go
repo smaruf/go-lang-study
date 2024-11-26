@@ -48,4 +48,12 @@ func PrintShapeInfo(s Shape) {
 }
 
 func main() {
-    r := Rectangle{
+    r := Rectangle{Width: 10, Height: 5}
+    c := Circle{Radius: 7}
+
+    fmt.Println("Rectangle:")
+    PrintShapeInfo(r)
+
+    fmt.Println("\nCircle:")
+    PrintShapeInfo(c)
+}
