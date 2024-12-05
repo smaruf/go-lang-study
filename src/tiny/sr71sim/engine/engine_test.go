@@ -1,18 +1,19 @@
 package engine
 
 import (
+    "encoding/json"
     "fmt"
 )
 
 type EngineState struct {
-    Velocity          float64
-    AirIntake         float64
-    Altitude          float64
-    CombustionChamber float64
-    ExhaustPattern    string
+    Velocity          float64 `json:"velocity"`
+    AirIntake         float64 `json:"air_intake"`
+    Altitude          float64 `json:"altitude"`
+    CombustionChamber float64 `json:"combustion_chamber"`
+    ExhaustPattern    string  `json:"exhaust_pattern"`
 }
 
-func test() {
+func test() (string, error) {
     fmt.Println("Start SR-71 Single Engine Test....")
 
     var states []EngineState
@@ -47,11 +48,19 @@ func test() {
         })
     }
 
-    for _, state := range states {
-        fmt.Printf("Testing at Mach %.1f:\n", state.Velocity)
-        fmt.Printf("  Air Intake: %.1f\n", state.AirIntake)
-        fmt.Printf("  Altitude: %.1f meters\n", state.Altitude)
-        fmt.Printf("  Combustion Chamber Heat: %.1f°C\n", state.CombustionChamber)
-        fmt.Printf("  Exhaust Pattern: %s\n", state.ExhaustPattern)
+    jsonData, err := json.Marshal(states)
+    if err != nil {
+        return "", err
+    }
+
+    return string(jsonData), nil
+}
+
+func main() {
+    result, err := test()
+    if err != nil {
+        fmt.Println("Error:", err)
+    } else {
+        fmt.Println("Test Data:", result)
     }
 }
