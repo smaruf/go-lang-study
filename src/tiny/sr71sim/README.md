@@ -1,45 +1,48 @@
 ## SIMULATOR PLANNING FOR SR-71 HYPERSONIC AIRCRAFT
+
 ### Tasks:
-1. Single Engine simulation
-2. Double Engine simulation
+1. Single Engine Simulation
+2. Double Engine Simulation
 3. Avionics Simulation
-4. Fly-by-wire vs Fly-by-optics simulation
-5. Subsonic flying simulation
-6. Supersonic flying simultion
-7. Fuel measurement and refueling simulation
-8. Auto pilot simulation
-9. Hypersonic flying simulation
-10. Reaction of advisary simulation
-11. Photo reconosis simulation
-12. External environmenatal changes simulation
-13. Visual input simulation respect to environment
-14. Cabin pressure simulation
-15. Pressure suit simulation
-16. Emergency landing simulation
-17. Quick take off and landing simulation
-18. Manuverity simulation with G-force handing
-19. Emergency escape simulation
-20. Ground control simulation
-21. Satelite input simulation
-22. Plug and Play extentions simulation
-### Hardwares:
+4. Fly-by-Wire vs Fly-by-Optics Simulation
+5. Subsonic Flying Simulation
+6. Supersonic Flying Simulation
+7. Fuel Measurement and Refueling Simulation
+8. Autopilot Simulation
+9. Hypersonic Flying Simulation
+10. Adversary Reaction Simulation
+11. Photo Reconnaissance Simulation
+12. External Environmental Changes Simulation
+13. Visual Input Simulation with Respect to the Environment
+14. Cabin Pressure Simulation
+15. Pressure Suit Simulation
+16. Emergency Landing Simulation
+17. Quick Takeoff and Landing Simulation
+18. Maneuverability Simulation with G-Force Handling
+19. Emergency Escape Simulation
+20. Ground Control Simulation
+21. Satellite Input Simulation
+22. Plug and Play Extensions Simulation
+
+### Hardware:
 1. Controllers
 2. Instruments
-3. View projection
-4. Seat with Emergency gears
-5. Physical change reflectors
-6. PCB
-7. Connector
+3. View Projection
+4. Seat with Emergency Gears
+5. Physical Change Reflectors
+6. PCB (Printed Circuit Board)
+7. Connectors
 8. Data BUS
 9. AI Units
 10. Displays
-11. Power source
-12. Communicator
-13. Extention
+11. Power Source
+12. Communicators
+13. Extensions
+
 ### Software/Firmware:
 1. Engines
 2. Avionics
-3. Flying and Landing
-4. External controls
-5. Ground controls
-6. Controlling OS/Base Controller with Plug-n-Play Extension
+3. Flying and Landing Controls
+4. External Controls
+5. Ground Controls
+6. Controlling OS/Base Controller with Plug-n-Play Extensions
