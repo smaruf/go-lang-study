@@ -32,6 +32,48 @@ endif
 
 :Maintain Autopilot Status;
 :Log Avionics Data;
+
+:Check Flight Mode;
+if (Subsonic Flight?) then (yes)
+  :Monitor Fuel Leaching Rate;
+  :Adjust Fuel Management;
+  :Continue Subsonic Flight;
+else (no)
+  if (Supersonic Flight?) then (yes)
+    :Activate Supersonic Systems;
+    :Monitor Supersonic Flight Parameters;
+    if (Parameters Normal?) then (yes)
+      :Continue Supersonic Flight;
+    else (no)
+      :Adjust Supersonic Flight Parameters;
+    endif
+  else (no)
+    if (Hypersonic Flight?) then (yes)
+      :Activate Hypersonic Systems;
+      :Monitor Hypersonic Flight Parameters;
+      if (Parameters Normal?) then (yes)
+        :Continue Hypersonic Flight;
+      else (no)
+        :Adjust Hypersonic Flight Parameters;
+      endif
+      :Check Altitude;
+      if (High Altitude?) then (yes)
+        :Monitor High Altitude Hypersonic Flight Parameters;
+      endif
+    endif
+  endif
+endif
+
+:Prepare for Landing;
+:Monitor External Heat;
+:Adjust Approach Based on Heat Data;
+:Perform Landing Procedures;
+
+:Initiate Cooling Systems;
+:Monitor External and Internal Temperature;
+:Ensure Fuel Safety During Cooling;
+
+:Log Flight Data;
 stop
 
 @enduml
