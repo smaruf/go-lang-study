@@ -6,14 +6,18 @@ import (
     "net/http"
     "bytes"
     "time"
+    "path/to/avionics"
+    "path/to/engine"
 )
 
 type SimulationData struct {
-    StartTime    time.Time `json:"start_time"`
-    EndTime      time.Time `json:"end_time"`
-    UniqueTestID string    `json:"unique_test_id"`
-    Altitude     float64   `json:"altitude"`
-    Speed        float64   `json:"speed"`
+    StartTime      time.Time                `json:"start_time"`
+    EndTime        time.Time                `json:"end_time"`
+    UniqueTestID   string                   `json:"unique_test_id"`
+    Altitude       float64                  `json:"altitude"`
+    Speed          float64                  `json:"speed"`
+    AvionicsStates []avionics.AvionicsState `json:"avionics_states"`
+    EngineStates   []engine.EngineState     `json:"engine_states"`
 }
 
 type LineGraphData struct {
@@ -39,12 +43,40 @@ func CloseSimulation() {
     // Add cleanup steps here
 
     // Generate simulation report
+    avionicsDataCh := make(chan []avionics.AvionicsState)
+    engineDataCh := make(chan []engine.EngineState)
+
+    go func() {
+        avionicsData, err := avionics.Test()
+        if err != nil {
+            fmt.Println("Error getting avionics data:", err)
+            close(avionicsDataCh)
+            return
+        }
+        avionicsDataCh <- avionicsData
+    }()
+
+    go func() {
+        engineData, err := engine.Test()
+        if err != nil {
+            fmt.Println("Error getting engine data:", err)
+            close(engineDataCh)
+            return
+        }
+        engineDataCh <- engineData
+    }()
+
+    avionicsData := <-avionicsDataCh
+    engineData := <-engineDataCh
+
     data := SimulationData{
-        StartTime: startTime,
-        EndTime: endTime,
+        StartTime:    startTime,
+        EndTime:      endTime,
         UniqueTestID: uniqueTestID,
-        Altitude: 10000, // Example data
-        Speed:    300,   // Example data
+        Altitude:     10000, // Example data
+        Speed:        300,   // Example data
+        AvionicsStates: avionicsData,
+        EngineStates:   engineData,
         // Populate with actual simulation data
     }
 
@@ -69,11 +101,39 @@ func CloseSimulation() {
 func StoreSimulationData() {
     fmt.Println("Storing Simulation Data...")
 
+    avionicsDataCh := make(chan []avionics.AvionicsState)
+    engineDataCh := make(chan []engine.EngineState)
+
+    go func() {
+        avionicsData, err := avionics.Test()
+        if err != nil {
+            fmt.Println("Error getting avionics data:", err)
+            close(avionicsDataCh)
+            return
+        }
+        avionicsDataCh <- avionicsData
+    }()
+
+    go func() {
+        engineData, err := engine.Test()
+        if err != nil {
+            fmt.Println("Error getting engine data:", err)
+            close(engineDataCh)
+            return
+        }
+        engineDataCh <- engineData
+    }()
+
+    avionicsData := <-avionicsDataCh
+    engineData := <-engineDataCh
+
     data := SimulationData{
-        StartTime: startTime,
+        StartTime:    startTime,
         UniqueTestID: uniqueTestID,
-        Altitude: 10000, // Example data
-        Speed:    300,   // Example data
+        Altitude:     10000, // Example data
+        Speed:        300,   // Example data
+        AvionicsStates: avionicsData,
+        EngineStates:   engineData,
         // Populate with actual simulation data
     }
 
