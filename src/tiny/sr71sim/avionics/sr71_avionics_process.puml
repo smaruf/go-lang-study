@@ -1,3 +1,37 @@
 @startuml
+title SR-71 Avionics Process
+
+start
+:Initialize Avionics System;
+:Check Communication Systems;
+if (Communication Active?) then (yes)
+  :Activate Navigation Systems;
+else (no)
+  :Report Communication Failure;
+  stop
+endif
+
+:Monitor Engine Performance;
+:Check Engine Choke Recovery;
+if (Engine Choke?) then (yes)
+  :Perform Engine Choke Recovery;
+endif
+
+:Monitor Cabin Pressure;
+if (Cabin Pressure Normal?) then (yes)
+  :Continue Monitoring;
+else (no)
+  :Alert Cabin Pressure Issue;
+  :Initiate Emergency Procedures;
+endif
+
+:Monitor G-Force Levels;
+if (G-Force Excessive?) then (yes)
+  :Initiate G-Force Recovery Procedures;
+endif
+
+:Maintain Autopilot Status;
+:Log Avionics Data;
+stop
 
 @enduml
