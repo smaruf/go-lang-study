@@ -1,46 +1,49 @@
 package avionics
 
 import (
+    "encoding/json"
     "fmt"
 )
 
 type AvionicsState struct {
-    Altitude            float64
-    Speed               float64
-    NavigationSystem    string
-    CommunicationStatus string
-    AutopilotStatus     string
-    EngineChokeRecovery bool
-    CabinPressure       float64
-    GForceRecovery      bool
-    FuelLeachingRate    float64
-    ExternalHeat        float64
-    Temperature         float64
-    FuelSafety          bool
+    Altitude            float64 `json:"altitude"`
+    Speed               float64 `json:"speed"`
+    NavigationSystem    string  `json:"navigation_system"`
+    CommunicationStatus string  `json:"communication_status"`
+    AutopilotStatus     string  `json:"autopilot_status"`
+    EngineChokeRecovery bool    `json:"engine_choke_recovery"`
+    CabinPressure       float64 `json:"cabin_pressure"`
+    GForceRecovery      bool    `json:"g_force_recovery"`
+    FuelLeachingRate    float64 `json:"fuel_leaching_rate"`
+    ExternalHeat        float64 `json:"external_heat"`
+    Temperature         float64 `json:"temperature"`
+    FuelSafety          bool    `json:"fuel_safety"`
 }
 
-func test() {
+func test() (string, error) {
     fmt.Println("Start SR-71 Avionics Test...")
 
     states := []AvionicsState{
-        {Altitude: 10000, Speed: 300, NavigationSystem: "GPS", CommunicationStatus: "Active", AutopilotStatus: "Engaged", EngineChokeRecovery: true, CabinPressure: 10.5, GForceRecovery: true, FuelLeachingRate: 0.5, ExternalHeat: 45, Temperature: 15, FuelSafety: true},
-        {Altitude: 15000, Speed: 500, NavigationSystem: "INS", CommunicationStatus: "Active", AutopilotStatus: "Disengaged", EngineChokeRecovery: false, CabinPressure: 9.8, GForceRecovery: true, FuelLeachingRate: 0.4, ExternalHeat: 50, Temperature: 20, FuelSafety: true},
-        {Altitude: 20000, Speed: 700, NavigationSystem: "GPS", CommunicationStatus: "Inactive", AutopilotStatus: "Engaged", EngineChokeRecovery: true, CabinPressure: 8.5, GForceRecovery: false, FuelLeachingRate: 0.3, ExternalHeat: 55, Temperature: 25, FuelSafety: false},
-        {Altitude: 25000, Speed: 900, NavigationSystem: "INS", CommunicationStatus: "Active", AutopilotStatus: "Engaged", EngineChokeRecovery: false, CabinPressure: 7.9, GForceRecovery: true, FuelLeachingRate: 0.2, ExternalHeat: 60, Temperature: 30, FuelSafety: true},
-        {Altitude: 30000, Speed: 1100, NavigationSystem: "GPS", CommunicationStatus: "Active", AutopilotStatus: "Disengaged", EngineChokeRecovery: true, CabinPressure: 7.2, GForceRecovery: false, FuelLeachingRate: 0.1, ExternalHeat: 65, Temperature: 35, FuelSafety: false},
+        {Altitude: 10000, Speed: 300, NavigationSystem: "GPS", CommunicationStatus: "Active", AutopilotStatus: "Engaged", EngineChokeRecovery: true, CabinPressure: 10.5, GForceRecovery: true, FuelLeachingRate: 1.0, ExternalHeat: 50.0, Temperature: 24.0, FuelSafety: true},
+        {Altitude: 15000, Speed: 500, NavigationSystem: "INS", CommunicationStatus: "Active", AutopilotStatus: "Disengaged", EngineChokeRecovery: false, CabinPressure: 9.8, GForceRecovery: true, FuelLeachingRate: 1.2, ExternalHeat: 55.0, Temperature: 25.0, FuelSafety: true},
+        {Altitude: 20000, Speed: 700, NavigationSystem: "GPS", CommunicationStatus: "Inactive", AutopilotStatus: "Engaged", EngineChokeRecovery: true, CabinPressure: 8.5, GForceRecovery: false, FuelLeachingRate: 1.4, ExternalHeat: 60.0, Temperature: 26.0, FuelSafety: false},
+        {Altitude: 25000, Speed: 900, NavigationSystem: "INS", CommunicationStatus: "Active", AutopilotStatus: "Engaged", EngineChokeRecovery: false, CabinPressure: 7.9, GForceRecovery: true, FuelLeachingRate: 1.6, ExternalHeat: 65.0, Temperature: 27.0, FuelSafety: true},
+        {Altitude: 30000, Speed: 1100, NavigationSystem: "GPS", CommunicationStatus: "Active", AutopilotStatus: "Disengaged", EngineChokeRecovery: true, CabinPressure: 7.2, GForceRecovery: false, FuelLeachingRate: 1.8, ExternalHeat: 70.0, Temperature: 28.0, FuelSafety: false},
     }
 
-    for _, state := range states {
-        fmt.Printf("Testing at Altitude %.1f meters and Speed %.1f km/h:\n", state.Altitude, state.Speed)
-        fmt.Printf("  Navigation System: %s\n", state.NavigationSystem)
-        fmt.Printf("  Communication Status: %s\n", state.CommunicationStatus)
-        fmt.Printf("  Autopilot Status: %s\n", state.AutopilotStatus)
-        fmt.Printf("  Engine Choke Recovery: %t\n", state.EngineChokeRecovery)
-        fmt.Printf("  Cabin Pressure: %.1f psi\n", state.CabinPressure)
-        fmt.Printf("  G-Force Recovery: %t\n", state.GForceRecovery)
-        fmt.Printf("  Fuel Leaching Rate: %.1f\n", state.FuelLeachingRate)
-        fmt.Printf("  External Heat: %.1f°C\n", state.ExternalHeat)
-        fmt.Printf("  Temperature: %.1f°C\n", state.Temperature)
-        fmt.Printf("  Fuel Safety: %t\n", state.FuelSafety)
+    jsonData, err := json.Marshal(states)
+    if err != nil {
+        return "", err
+    }
+
+    return string(jsonData), nil
+}
+
+func main() {
+    result, err := test()
+    if err != nil {
+        fmt.Println("Error:", err)
+    } else {
+        fmt.Println("Simulation Data:", result)
     }
 }
