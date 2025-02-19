@@ -8,6 +8,8 @@ import (
     "time"
     "path/to/avionics"
     "path/to/engine"
+    "log"
+    "os"
 )
 
 type SimulationData struct {
@@ -25,89 +27,60 @@ type LineGraphData struct {
     Values     []float64   `json:"values"`
 }
 
-var startTime time.Time
-var uniqueTestID string
+var (
+    startTime    time.Time
+    uniqueTestID string
+    logger       *log.Logger
+)
+
+const storageURL = "http://example.com/storeSimulationData"
+
+func init() {
+    logger = log.New(os.Stdout, "SR-71 Simulation: ", log.LstdFlags)
+}
+
+func generateUniqueTestID() string {
+    return fmt.Sprintf("test-%d", time.Now().UnixNano())
+}
 
 func StartSimulation() {
     startTime = time.Now()
-    uniqueTestID = "test12345" // Replace with actual unique test ID generation logic
-    fmt.Println("Starting SR-71 Simulation...")
+    uniqueTestID = generateUniqueTestID()
+    logger.Println("Starting SR-71 Simulation...")
     // Add simulation steps here
 }
 
 func CloseSimulation() {
     endTime := time.Now()
-    fmt.Println("Closing SR-71 Simulation...")
+    logger.Println("Closing SR-71 Simulation...")
 
-    // Clean up processes
-    // Add cleanup steps here
-
-    // Generate simulation report
-    avionicsDataCh := make(chan []avionics.AvionicsState)
-    engineDataCh := make(chan []engine.EngineState)
-
-    go func() {
-        avionicsData, err := avionics.Test()
-        if err != nil {
-            fmt.Println("Error getting avionics data:", err)
-            close(avionicsDataCh)
-            return
-        }
-        avionicsDataCh <- avionicsData
-    }()
-
-    go func() {
-        engineData, err := engine.Test()
-        if err != nil {
-            fmt.Println("Error getting engine data:", err)
-            close(engineDataCh)
-            return
-        }
-        engineDataCh <- engineData
-    }()
-
-    avionicsData := <-avionicsDataCh
-    engineData := <-engineDataCh
+    avionicsData, engineData := fetchData()
 
     data := SimulationData{
-        StartTime:    startTime,
-        EndTime:      endTime,
-        UniqueTestID: uniqueTestID,
-        Altitude:     10000, // Example data
-        Speed:        300,   // Example data
+        StartTime:      startTime,
+        EndTime:        endTime,
+        UniqueTestID:   uniqueTestID,
+        Altitude:       10000, // Example data
+        Speed:          300,   // Example data
         AvionicsStates: avionicsData,
         EngineStates:   engineData,
-        // Populate with actual simulation data
     }
 
-    jsonData, err := json.Marshal(data)
-    if err != nil {
-        fmt.Println("Error marshalling JSON:", err)
-        return
+    if err := storeSimulationData(data); err != nil {
+        logger.Println("Error storing simulation data:", err)
+    } else {
+        logger.Println("Simulation data stored successfully")
     }
-
-    // Replace with your actual network storage URL
-    url := "http://example.com/storeSimulationData"
-    resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonData))
-    if err != nil {
-        fmt.Println("Error posting JSON data:", err)
-        return
-    }
-    defer resp.Body.Close()
-
-    fmt.Println("Simulation data stored successfully")
 }
 
-func StoreSimulationData() {
-    fmt.Println("Storing Simulation Data...")
-
+func fetchData() ([]avionics.AvionicsState, []engine.EngineState) {
     avionicsDataCh := make(chan []avionics.AvionicsState)
     engineDataCh := make(chan []engine.EngineState)
 
     go func() {
         avionicsData, err := avionics.Test()
         if err != nil {
-            fmt.Println("Error getting avionics data:", err)
+            logger.Println("Error getting avionics data:", err)
             close(avionicsDataCh)
             return
         }
@@ -117,46 +90,33 @@ func StoreSimulationData() {
     go func() {
         engineData, err := engine.Test()
         if err != nil {
-            fmt.Println("Error getting engine data:", err)
+            logger.Println("Error getting engine data:", err)
             close(engineDataCh)
             return
         }
         engineDataCh <- engineData
     }()
 
-    avionicsData := <-avionicsDataCh
-    engineData := <-engineDataCh
+    return <-avionicsDataCh, <-engineDataCh
+}
 
-    data := SimulationData{
-        StartTime:    startTime,
-        UniqueTestID: uniqueTestID,
-        Altitude:     10000, // Example data
-        Speed:        300,   // Example data
-        AvionicsStates: avionicsData,
-        EngineStates:   engineData,
-        // Populate with actual simulation data
-    }
-
+func storeSimulationData(data SimulationData) error {
     jsonData, err := json.Marshal(data)
     if err != nil {
-        fmt.Println("Error marshalling JSON:", err)
-        return
+        return fmt.Errorf("error marshalling JSON: %w", err)
     }
 
-    // Replace with your actual network storage URL
-    url := "http://example.com/storeSimulationData"
-    resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonData))
+    resp, err := http.Post(storageURL, "application/json", bytes.NewBuffer(jsonData))
     if err != nil {
-        fmt.Println("Error posting JSON data:", err)
-        return
+        return fmt.Errorf("error posting JSON data: %w", err)
     }
     defer resp.Body.Close()
 
-    fmt.Println("Simulation data stored successfully")
+    return nil
 }
 
 func PlotSimulation() {
-    fmt.Println("Plotting Simulation Data...")
+    logger.Println("Plotting Simulation Data...")
 
     graphData := LineGraphData{
         Timestamps: []time.Time{time.Now().Add(-5 * time.Minute), time.Now()},
@@ -165,21 +125,21 @@ func PlotSimulation() {
 
     jsonData, err := json.Marshal(graphData)
     if err != nil {
-        fmt.Println("Error marshalling JSON:", err)
+        logger.Println("Error marshalling JSON:", err)
         return
     }
 
     // Print or return the JSON data
-    fmt.Println(string(jsonData))
+    logger.Println(string(jsonData))
 }
 
 func main() {
-    fmt.Println("Start SR-71 Simulation")
+    logger.Println("Start SR-71 Simulation")
     go StartSimulation()
     defer CloseSimulation()
     StoreSimulationData()
     PlotSimulation()
-    fmt.Println("Ending SR-71 Simulation")
+    logger.Println("Ending SR-71 Simulation")
     for {
         // Keep the program running
         time.Sleep(time.Hour)
