@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  user-service:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8080"
+    environment:
+      - PORT=8080
+      - SERVICE_NAME=user-service
+      - LOG_LEVEL=info
+    networks:
+      - microservices
+
+  order-service:
+    build:
+      context: ./order-service
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8080"
+    environment:
+      - PORT=8080
+      - SERVICE_NAME=order-service
+      - USER_SERVICE_URL=http://user-service:8080
+      - LOG_LEVEL=info
+    depends_on:
+      - user-service
+    networks:
+      - microservices
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - USER_SERVICE_URL=http://user-service:8080
+      - ORDER_SERVICE_URL=http://order-service:8080
+      - LOG_LEVEL=info
+    depends_on:
+      - user-service
+      - order-service
+    networks:
+      - microservices
+
+networks:
+  microservices:
+    driver: bridge
