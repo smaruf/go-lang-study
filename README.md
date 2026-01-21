@@ -103,6 +103,9 @@ go-lang-study/
 | [📈 NASDAQ Trading Simulator](src/nasdaq-cse/) | Complete trading system with WebSocket, AI bot | REST API, WebSocket, GORM, Testing |
 | [🤖 GoBot Collection](src/gobot/) | IoT and bot integrations | Hardware control, Discord API, Environment variables |
 | [💰 Wallet Service](src/wallet/) | gRPC-based wallet system | gRPC, Protocol Buffers, Microservices |
+| [🎨 UI Applications](src/ui-app/) | Desktop GUI applications with Fyne | GUI, Fyne framework, Event handling |
+| [🔧 Embedded OS](src/embedded-os/) | Minimal OS for Raspberry Pi & Arduino | TinyGo, Embedded systems, GPIO, Sensors |
+| [🚀 Advanced Patterns](src/advanced-patterns/) | Advanced Go patterns and best practices | Design patterns, Concurrency, Testing |
 
 ### 🌐 Web Development
 | Example | Description | Framework/Library |
