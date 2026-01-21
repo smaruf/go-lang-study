@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	
 	"fyne.io/fyne/v2"
@@ -8,6 +9,13 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
+)
+
+var (
+	ErrNameRequired     = errors.New("name is required")
+	ErrEmailRequired    = errors.New("email is required")
+	ErrPasswordRequired = errors.New("password is required")
+	ErrTermsNotAccepted = errors.New("you must accept terms and conditions")
 )
 
 func main() {
@@ -47,19 +55,19 @@ func main() {
 	submitButton := widget.NewButton("Submit", func() {
 		// Validate inputs
 		if nameEntry.Text == "" {
-			dialog.ShowError(fmt.Errorf("name is required"), myWindow)
+			dialog.ShowError(ErrNameRequired, myWindow)
 			return
 		}
 		if emailEntry.Text == "" {
-			dialog.ShowError(fmt.Errorf("email is required"), myWindow)
+			dialog.ShowError(ErrEmailRequired, myWindow)
 			return
 		}
 		if passwordEntry.Text == "" {
-			dialog.ShowError(fmt.Errorf("password is required"), myWindow)
+			dialog.ShowError(ErrPasswordRequired, myWindow)
 			return
 		}
 		if !termsCheck.Checked {
-			dialog.ShowError(fmt.Errorf("you must accept terms and conditions"), myWindow)
+			dialog.ShowError(ErrTermsNotAccepted, myWindow)
 			return
 		}
 

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -171,10 +172,5 @@ func main() {
 
 // Helper function to check if string contains a character
 func contains(s, substr string) bool {
-	for i := 0; i < len(s); i++ {
-		if string(s[i]) == substr {
-			return true
-		}
-	}
-	return false
+	return strings.Contains(s, substr)
 }
