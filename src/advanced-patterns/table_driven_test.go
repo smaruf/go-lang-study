@@ -121,9 +121,10 @@ func TestDivide(t *testing.T) {
 	}
 }
 
-// Example 4: Struct Validation Tests
+// Struct Validation Tests
 
 type User struct {
+	ID    string
 	Name  string
 	Email string
 	Age   int
@@ -159,30 +160,30 @@ func TestUserValidation(t *testing.T) {
 	}{
 		{
 			name:      "valid user",
-			user:      User{Name: "John", Email: "john@example.com", Age: 30},
+			user:      User{ID: "1", Name: "John", Email: "john@example.com", Age: 30},
 			expectErr: false,
 		},
 		{
 			name:      "empty name",
-			user:      User{Name: "", Email: "john@example.com", Age: 30},
+			user:      User{ID: "2", Name: "", Email: "john@example.com", Age: 30},
 			expectErr: true,
 			errMsg:    "name cannot be empty",
 		},
 		{
 			name:      "empty email",
-			user:      User{Name: "John", Email: "", Age: 30},
+			user:      User{ID: "3", Name: "John", Email: "", Age: 30},
 			expectErr: true,
 			errMsg:    "email cannot be empty",
 		},
 		{
 			name:      "negative age",
-			user:      User{Name: "John", Email: "john@example.com", Age: -1},
+			user:      User{ID: "4", Name: "John", Email: "john@example.com", Age: -1},
 			expectErr: true,
 			errMsg:    "age must be between 0 and 150",
 		},
 		{
 			name:      "age too high",
-			user:      User{Name: "John", Email: "john@example.com", Age: 200},
+			user:      User{ID: "5", Name: "John", Email: "john@example.com", Age: 200},
 			expectErr: true,
 			errMsg:    "age must be between 0 and 150",
 		},
