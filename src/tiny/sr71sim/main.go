@@ -1,15 +1,17 @@
 package main
 
 import (
-    "encoding/json"
-    "fmt"
-    "net/http"
     "bytes"
-    "time"
-    "path/to/avionics"
-    "path/to/engine"
+    "encoding/json"
+    "flag"
+    "fmt"
     "log"
+    "net/http"
     "os"
+    "time"
+    
+    "github.com/smaruf/go-lang-study/src/tiny/sr71sim/avionics"
+    "github.com/smaruf/go-lang-study/src/tiny/sr71sim/engine"
 )
 
 type SimulationData struct {
@@ -31,12 +33,20 @@ var (
     startTime    time.Time
     uniqueTestID string
     logger       *log.Logger
+    simDuration  time.Duration
 )
 
+// NOTE: This URL is a placeholder for demonstration purposes.
+// In production, this should be configured via environment variables or config file.
 const storageURL = "http://example.com/storeSimulationData"
 
 func init() {
     logger = log.New(os.Stdout, "SR-71 Simulation: ", log.LstdFlags)
+    
+    // Parse command-line flags
+    duration := flag.Int("duration", 5, "Simulation duration in seconds")
+    flag.Parse()
+    simDuration = time.Duration(*duration) * time.Second
 }
 
 func generateUniqueTestID() string {
@@ -73,15 +83,18 @@ func CloseSimulation() {
     }
 }
 
+// fetchData retrieves avionics and engine data concurrently
+// NOTE: This is a simplified implementation for demonstration.
+// Production code should use proper error handling and synchronization.
 func fetchData() ([]avionics.AvionicsState, []engine.EngineState) {
-    avionicsDataCh := make(chan []avionics.AvionicsState)
-    engineDataCh := make(chan []engine.EngineState)
+    avionicsDataCh := make(chan []avionics.AvionicsState, 1)
+    engineDataCh := make(chan []engine.EngineState, 1)
 
     go func() {
         avionicsData, err := avionics.Test()
         if err != nil {
             logger.Println("Error getting avionics data:", err)
-            close(avionicsDataCh)
+            avionicsDataCh <- nil
             return
         }
         avionicsDataCh <- avionicsData
@@ -91,13 +104,16 @@ func fetchData() ([]avionics.AvionicsState, []engine.EngineState) {
         engineData, err := engine.Test()
         if err != nil {
             logger.Println("Error getting engine data:", err)
-            close(engineDataCh)
+            engineDataCh <- nil
             return
         }
         engineDataCh <- engineData
     }()
 
-    return <-avionicsDataCh, <-engineDataCh
+    avionicsResult := <-avionicsDataCh
+    engineResult := <-engineDataCh
+    
+    return avionicsResult, engineResult
 }
 
 func storeSimulationData(data SimulationData) error {
@@ -135,13 +151,13 @@ func PlotSimulation() {
 
 func main() {
     logger.Println("Start SR-71 Simulation")
-    go StartSimulation()
-    defer CloseSimulation()
-    StoreSimulationData()
+    logger.Printf("Simulation will run for %v", simDuration)
+    StartSimulation()
+    
+    // Run simulation for configured duration
+    time.Sleep(simDuration)
+    
+    CloseSimulation()
     PlotSimulation()
     logger.Println("Ending SR-71 Simulation")
-    for {
-        // Keep the program running
-        time.Sleep(time.Hour)
-    }
 }

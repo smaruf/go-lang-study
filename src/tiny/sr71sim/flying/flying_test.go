@@ -1,36 +1,11 @@
 package flying
 
 import (
-  "fmt"
   "testing"
 )
 
-type SR71 struct {
-  Altitude int
-  Velocity int
-}
-
-func (sr71 *SR71) FlyAtHeight(height int) {
-  sr71.Altitude = height
-  fmt.Printf("SR-71 flying at %d feet\n", height)
-}
-
-func (sr71 *SR71) AdjustVelocityForMission(mission string) {
-  switch mission {
-  case "reconnaissance":
-    sr71.Velocity = 2200 // speed in mph
-  case "high-speed":
-    sr71.Velocity = 2500
-  case "stealth":
-    sr71.Velocity = 1800
-  default:
-    sr71.Velocity = 2000
-  }
-  fmt.Printf("SR-71 adjusted velocity to %d mph for %s mission\n", sr71.Velocity, mission)
-}
-
 func TestSR71FlyingAtDifferentHeights(t *testing.T) {
-  sr71 := &SR71{}
+  sr71 := NewSR71()
 
   heights := []int{10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 85000}
   for _, height := range heights {
@@ -42,7 +17,7 @@ func TestSR71FlyingAtDifferentHeights(t *testing.T) {
 }
 
 func TestSR71VelocityShiftingForDifferentMissions(t *testing.T) {
-  sr71 := &SR71{}
+  sr71 := NewSR71()
 
   missions := []string{"reconnaissance", "high-speed", "stealth", "default"}
   expectedVelocities := map[string]int{
