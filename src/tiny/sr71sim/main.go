@@ -1,15 +1,16 @@
 package main
 
 import (
+    "bytes"
     "encoding/json"
     "fmt"
-    "net/http"
-    "bytes"
-    "time"
-    "path/to/avionics"
-    "path/to/engine"
     "log"
+    "net/http"
     "os"
+    "time"
+    
+    "github.com/smaruf/go-lang-study/src/tiny/sr71sim/avionics"
+    "github.com/smaruf/go-lang-study/src/tiny/sr71sim/engine"
 )
 
 type SimulationData struct {
@@ -135,13 +136,12 @@ func PlotSimulation() {
 
 func main() {
     logger.Println("Start SR-71 Simulation")
-    go StartSimulation()
-    defer CloseSimulation()
-    StoreSimulationData()
+    StartSimulation()
+    
+    // Run simulation for a duration
+    time.Sleep(5 * time.Second)
+    
+    CloseSimulation()
     PlotSimulation()
     logger.Println("Ending SR-71 Simulation")
-    for {
-        // Keep the program running
-        time.Sleep(time.Hour)
-    }
 }
