@@ -36,6 +36,8 @@ var (
     simDuration  time.Duration
 )
 
+// NOTE: This URL is a placeholder for demonstration purposes.
+// In production, this should be configured via environment variables or config file.
 const storageURL = "http://example.com/storeSimulationData"
 
 func init() {
@@ -81,15 +83,18 @@ func CloseSimulation() {
     }
 }
 
+// fetchData retrieves avionics and engine data concurrently
+// NOTE: This is a simplified implementation for demonstration.
+// Production code should use proper error handling and synchronization.
 func fetchData() ([]avionics.AvionicsState, []engine.EngineState) {
-    avionicsDataCh := make(chan []avionics.AvionicsState)
-    engineDataCh := make(chan []engine.EngineState)
+    avionicsDataCh := make(chan []avionics.AvionicsState, 1)
+    engineDataCh := make(chan []engine.EngineState, 1)
 
     go func() {
         avionicsData, err := avionics.Test()
         if err != nil {
             logger.Println("Error getting avionics data:", err)
-            close(avionicsDataCh)
+            avionicsDataCh <- nil
             return
         }
         avionicsDataCh <- avionicsData
@@ -99,13 +104,16 @@ func fetchData() ([]avionics.AvionicsState, []engine.EngineState) {
         engineData, err := engine.Test()
         if err != nil {
             logger.Println("Error getting engine data:", err)
-            close(engineDataCh)
+            engineDataCh <- nil
             return
         }
         engineDataCh <- engineData
     }()
 
-    return <-avionicsDataCh, <-engineDataCh
+    avionicsResult := <-avionicsDataCh
+    engineResult := <-engineDataCh
+    
+    return avionicsResult, engineResult
 }
 
 func storeSimulationData(data SimulationData) error {

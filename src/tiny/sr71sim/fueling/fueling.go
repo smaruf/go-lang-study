@@ -180,7 +180,9 @@ func (fs *FuelSystem) GetStatus() string {
 	)
 }
 
-// FuelingProcess is the main fueling logic function (kept for compatibility with tests)
+// FuelingProcess is a legacy function kept for backward compatibility with existing tests.
+// New code should use the FuelSystem API instead.
+// TODO: Refactor tests to use FuelSystem and remove this function.
 func FuelingProcess(speed, altitude float64, engineType string, missionType string) string {
 	// If speed is high enough, switch from turbojet to ramjet
 	if engineType == "turbojet" && speed > 2.0 {
