@@ -1,0 +1,79 @@
+{
+  "1507": {
+    "height": 20.200000000000003,
+    "hole_spacing": 10.200000000000001,
+    "material": "PETG",
+    "motor_diameter": 15,
+    "thickness": 3,
+    "type": "Motor Mount",
+    "volume_cm3": 0.6091532380597983,
+    "weight_g": 0.7736246123359438,
+    "width": 20.200000000000003
+  },
+  "1806": {
+    "height": 22.240000000000002,
+    "hole_spacing": 12.24,
+    "material": "PETG",
+    "motor_diameter": 18,
+    "thickness": 3,
+    "type": "Motor Mount",
+    "volume_cm3": 0.6356227835307561,
+    "weight_g": 0.8072409350840603,
+    "width": 22.240000000000002
+  },
+  "2204": {
+    "height": 24.96,
+    "hole_spacing": 14.96,
+    "material": "PETG",
+    "motor_diameter": 22,
+    "thickness": 3,
+    "type": "Motor Mount",
+    "volume_cm3": 0.6437836650999806,
+    "weight_g": 0.8176052546769754,
+    "width": 24.96
+  },
+  "2207": {
+    "height": 24.96,
+    "hole_spacing": 14.96,
+    "material": "PETG",
+    "motor_diameter": 22,
+    "thickness": 3,
+    "type": "Motor Mount",
+    "volume_cm3": 0.6437836650999806,
+    "weight_g": 0.8176052546769754,
+    "width": 24.96
+  },
+  "2306": {
+    "height": 25.64,
+    "hole_spacing": 15.64,
+    "material": "PETG",
+    "motor_diameter": 23,
+    "thickness": 3,
+    "type": "Motor Mount",
+    "volume_cm3": 0.6409789130413256,
+    "weight_g": 0.8140432195624835,
+    "width": 25.64
+  },
+  "2407": {
+    "height": 26.32,
+    "hole_spacing": 16.32,
+    "material": "PETG",
+    "motor_diameter": 24,
+    "thickness": 3,
+    "type": "Motor Mount",
+    "volume_cm3": 0.6362361720022848,
+    "weight_g": 0.8080199384429017,
+    "width": 26.32
+  },
+  "2806": {
+    "height": 29.040000000000003,
+    "hole_spacing": 19.040000000000003,
+    "material": "PETG",
+    "motor_diameter": 28,
+    "thickness": 3,
+    "type": "Motor Mount",
+    "volume_cm3": 0.5978853180422775,
+    "weight_g": 0.7593143539136925,
+    "width": 29.040000000000003
+  }
+}

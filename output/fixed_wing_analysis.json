@@ -1,0 +1,49 @@
+{
+  "fuselage": {
+    "height_mm": 80,
+    "length_mm": 800,
+    "type": "Fuselage",
+    "volume_cm3": 2010.6176000000003,
+    "width_mm": 60
+  },
+  "loads": {
+    "airspeed_m/s": 15,
+    "can_fly": true,
+    "drag_g": 112.38532110091742,
+    "excess_lift_g": 1997.7064220183483,
+    "lift_at_speed_g": 2247.7064220183483,
+    "power_required_W": 16.5375,
+    "required_thrust_g": 112.38532110091742,
+    "stall_speed_m/s": 3.6533462435841204,
+    "weight_g": 250,
+    "wing_loading_g/dm2": 12.5
+  },
+  "performance": {
+    "cruise_speed_m/s": 15,
+    "drag_g": 112.38532110091742,
+    "lift_g": 2247.7064220183483,
+    "stall_speed_m/s": 3.6533462435841204,
+    "weight_g": 250,
+    "wing_loading_g/dm2": 12.5
+  },
+  "tail": {
+    "horizontal_area_cm2": 400,
+    "horizontal_chord_mm": 100,
+    "horizontal_span_mm": 400,
+    "type": "Tail Surfaces",
+    "vertical_area_cm2": 180,
+    "vertical_chord_mm": 120,
+    "vertical_height_mm": 150
+  },
+  "wing": {
+    "airfoil": "Clark-Y",
+    "area_cm2": 2000,
+    "aspect_ratio": 5,
+    "chord_mm": 200,
+    "dihedral_deg": 3,
+    "glide_ratio": 4,
+    "span_mm": 1000,
+    "thickness_%": 12,
+    "type": "Fixed Wing"
+  }
+}
