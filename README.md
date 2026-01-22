@@ -103,6 +103,9 @@ go-lang-study/
 | [📈 NASDAQ Trading Simulator](src/nasdaq-cse/) | Complete trading system with WebSocket, AI bot | REST API, WebSocket, GORM, Testing |
 | [🤖 GoBot Collection](src/gobot/) | IoT and bot integrations | Hardware control, Discord API, Environment variables |
 | [💰 Wallet Service](src/wallet/) | gRPC-based wallet system | gRPC, Protocol Buffers, Microservices |
+| [🎨 UI Applications](src/ui-app/) | Desktop GUI applications with Fyne | GUI, Fyne framework, Event handling |
+| [🔧 Embedded OS](src/embedded-os/) | Minimal OS for Raspberry Pi & Arduino | TinyGo, Embedded systems, GPIO, Sensors |
+| [🚀 Advanced Patterns](src/advanced-patterns/) | Advanced Go patterns and best practices | Design patterns, Concurrency, Testing |
 
 ### 🌐 Web Development
 | Example | Description | Framework/Library |
@@ -110,20 +113,34 @@ go-lang-study/
 | [Echo Server](src/echo/) | Simple HTTP server | Echo framework |
 | [Gin API](src/gin/) | REST API with middleware | Gin framework |
 | [HTTP/2 Server](src/http2_server.go) | HTTP/2 implementation | Standard library |
+| [Web Server](src/web-server/) | Basic web server examples | Standard library |
+| [WebSocket](src/ws/) | WebSocket communication | WebSocket library |
+| [Broadcast](src/broadcast/) | Broadcasting patterns | Standard library |
 
 ### ⚡ Concurrency & Performance
 | Example | Description | Concepts |
 |---------|-------------|----------|
 | [Goroutine Workers](src/goroutine/) | Worker pool patterns | Goroutines, Channels |
+| [Concurrency Patterns](src/concurrency/) | Advanced concurrency patterns | Channels, Select, Context |
 | [Atomic Operations](src/atomic_worker.go) | Thread-safe counters | sync/atomic |
+| [Atomic Increment](src/atomic_increament.go) | Atomic increment operations | sync/atomic |
 | [Mutex Examples](src/mutex-count.go) | Synchronization patterns | Mutexes, RWMutex |
+| [RWMutex](src/rw_mutex.go) | Read-Write mutex patterns | sync.RWMutex |
+| [Goroutine with Channel](src/goroutin_with_channel.go) | Basic goroutine communication | Goroutines, Channels |
+| [Sample Channel](src/sample_channel.go) | Channel usage examples | Channels |
+| [Sample Goroutine](src/sample_go_routine.go) | Basic goroutine patterns | Goroutines |
 
 ### 🛠️ System & Tools
 | Example | Description | Use Case |
 |---------|-------------|----------|
+| [CLI Tool](src/cli-tool/) | Command-line application | CLI development |
 | [Context Demo](src/context_demo.go) | Context usage patterns | Cancellation, Timeouts |
 | [Custom Middleware](src/custom_middleware.go) | HTTP middleware | Request/Response processing |
 | [Retry Mechanism](src/retry_mech.go) | Fault tolerance | Error handling |
+| [Retry Main](src/retry-main.go) | Retry pattern implementation | Error handling |
+| [Panic Recover](src/panic_recover_with_error.go) | Error recovery patterns | Panic/Recover |
+| [Reverse Proxy](src/reverse_proxy_server.go) | Reverse proxy server | HTTP proxy |
+| [Upstream Server](src/upstream_server.go) | Backend server example | HTTP server |
 
 ### 🧮 Algorithms & Data Structures
 | Example | Description | Algorithm |
@@ -131,6 +148,79 @@ go-lang-study/
 | [GCD Calculator](src/calculate_gcd.go) | Greatest Common Divisor | Euclidean algorithm |
 | [Palindrome Check](src/palindrome_str.go) | String manipulation | String algorithms |
 | [Radix Sort](src/radix_sort.go) | Sorting algorithm | Non-comparison sorting |
+| [Generate Combination](src/generate_combination.go) | Combination generation | Combinatorics |
+| [Calculator App](src/calculator_app.go) | Expression calculator | Parsing, Evaluation |
+| [Rubik Cube Solver](src/rubik_cube_solver.go) | Rubik's cube solving | Graph search |
+
+### 🎮 Game & Graphics
+| Example | Description | Technology |
+|---------|-------------|------------|
+| [Game Engine](src/game-engine/) | 3D game engine with G3N | G3N framework |
+| [Ping Pong Ball](src/ping_pong_ball.go) | Game simulation | Goroutines |
+| [Ping Pong 2 Min](src/ping_pong_ball_2_min.go) | Timed game simulation | Goroutines, Time |
+
+### 🔌 IoT & Embedded Systems
+| Example | Description | Platform |
+|---------|-------------|----------|
+| [TinyGo Projects](src/tiny/) | Embedded systems examples | TinyGo, RPi, Arduino |
+| [FreeRTOS Examples](src/tiny/freeRTOS/) | Real-time OS examples | FreeRTOS |
+| [SR-71 Simulator](src/tiny/sr71sim/) | Aircraft simulation | TinyGo |
+| [TinyGo Blinky](src/tinygo_blinky.go) | LED blink example | TinyGo |
+| [TinyGo PWM](src/tinygo_pwm.go) | PWM control example | TinyGo |
+| [GoBot Hello](src/gobot_hellow.go) | IoT framework intro | Gobot |
+| [GoBot Collection](src/gobot/) | IoT and bot integrations | Gobot framework |
+
+### ☁️ Cloud & Infrastructure
+| Example | Description | Service |
+|---------|-------------|---------|
+| [AWS Examples](src/aws/) | AWS services integration | AWS SDK |
+| [S3 Bucket](src/aws/bucket/) | S3 operations | AWS S3 |
+| [Lambda Functions](src/aws/lambda/) | Serverless functions | AWS Lambda |
+| [CloudFormation](src/aws/cloudFormation/) | Infrastructure as code | CloudFormation |
+| [Docker Examples](src/aws/docker/) | Containerization | Docker |
+| [SAM](src/aws/sam/) | Serverless application model | AWS SAM |
+
+### 🗄️ Database & Storage
+| Example | Description | Database |
+|---------|-------------|----------|
+| [GORM SQLite](src/gorm-sqllite.go) | ORM with SQLite | GORM |
+| [CockroachDB](src/cockroachdb/) | Distributed SQL | CockroachDB |
+| [Data Processing](src/data-processing/) | Data manipulation | Standard library |
+| [Processing](src/processing/) | Data processing patterns | Standard library |
+| [Simple CRUD](src/simple_crud.go) | Basic CRUD operations | Standard library |
+
+### 🏗️ Architecture & Patterns
+| Example | Description | Pattern |
+|---------|-------------|---------|
+| [Microservices](src/microservices/) | Microservice architecture | Clean architecture |
+| [User Service](src/microservices/user-service/) | User management service | Microservices |
+| [Interface Sample](src/Interface_sample.go) | Interface patterns | Interfaces |
+| [Pointer Struct Interface](src/pointer_struct_interface.go) | Advanced interface usage | Interfaces, Pointers |
+| [Pointer Struct Interface Closure](src/pointer_struct_interface_closure.go) | Closures with interfaces | Closures |
+| [Struct Method](src/struct_method.go) | Method declarations | Methods |
+| [Sample Pointer](src/sample_pointer.go) | Pointer usage | Pointers |
+
+### 🔐 Security & Authentication
+| Example | Description | Technology |
+|---------|-------------|------------|
+| [Simple JWT](src/simple_jwt.go) | JWT authentication | JWT |
+| [Jaeger Tracer](src/jagger_tracer.go) | Distributed tracing | Jaeger |
+
+### 🌐 Networking
+| Example | Description | Protocol |
+|---------|-------------|----------|
+| [Socket Mesh Net](src/socket_mesh_net.go) | Mesh networking | TCP/UDP |
+| [Go Socket Client](src/go_socket_client.go) | Socket client | TCP |
+| [Sample Subdomain](src/sample_subdomain.go) | Subdomain handling | HTTP |
+
+### 📚 Learning Resources
+| Example | Description | Topic |
+|---------|-------------|-------|
+| [Cheat Sheet](src/chitsheet/) | Go language cheat sheet | Quick reference |
+| [3 Weeks Plan](src/3-weeks-plan/) | Structured learning plan | Study guide |
+| [Function Examples](src/function/) | Function patterns | Functions |
+| [Named Return Values](src/name_return_valued_func.go) | Named returns | Functions |
+| [Nested Functions](src/nested_function_op.go) | Function composition | Functions |
 
 ## 💡 Core Concepts
 
