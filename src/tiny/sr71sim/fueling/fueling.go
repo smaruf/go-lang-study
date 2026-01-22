@@ -171,11 +171,15 @@ func (fs *FuelSystem) GetStatus() string {
 
 // FuelingProcess is the main fueling logic function (kept for compatibility with tests)
 func FuelingProcess(speed, altitude float64, engineType string, missionType string) string {
-	if missionType == "long-range" && engineType == "turbojet" && speed > 2.0 {
+	// If speed is high enough, switch from turbojet to ramjet
+	if engineType == "turbojet" && speed > 2.0 {
 		engineType = "ramjet"
 	}
+	
+	// If mission is long-range, add refueling suffix
 	if missionType == "long-range" {
 		return engineType + "_refueled"
 	}
+	
 	return engineType
 }

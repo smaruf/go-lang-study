@@ -11,7 +11,8 @@ import (
 )
 
 func main() {
-	fmt.Println("=== SR-71 Blackbird Basic Flight Simulation ===\n")
+	fmt.Println("=== SR-71 Blackbird Basic Flight Simulation ===")
+	fmt.Println()
 	
 	// Initialize aircraft
 	aircraft := flying.NewSR71()

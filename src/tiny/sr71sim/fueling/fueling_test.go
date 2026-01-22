@@ -3,18 +3,8 @@ package fueling
 import (
     "fmt"
     "testing"
+    "time"
 )
-
-// Dummy function to simulate fueling process
-func FuelingProcess(speed, altitude float64, engineType string, missionType string) string {
-    if missionType == "long-range" && engineType == "turbojet" && speed > 2.0 {
-        engineType = "ramjet"
-    }
-    if missionType == "long-range" {
-        return engineType + "_refueled"
-    }
-    return engineType
-}
 
 func TestFuelingProcess(t *testing.T) {
     tests := []struct {
@@ -41,5 +31,40 @@ func TestFuelingProcess(t *testing.T) {
                 t.Errorf("got %v, want %v", result, tt.expected)
             }
         })
+    }
+}
+
+func TestFuelSystemNew(t *testing.T) {
+    fs := NewFuelSystem()
+    if fs == nil {
+        t.Error("NewFuelSystem() should return a non-nil FuelSystem instance")
+    }
+    
+    if fs.GetFuelLevel() <= 0 {
+        t.Error("New fuel system should have fuel")
+    }
+}
+
+func TestFuelConsumption(t *testing.T) {
+    fs := NewFuelSystem()
+    initialFuel := fs.GetFuelAmount()
+    
+    fs.ConsumeFuel(1 * time.Hour)
+    
+    if fs.GetFuelAmount() >= initialFuel {
+        t.Error("Fuel should decrease after consumption")
+    }
+}
+
+func TestRefueling(t *testing.T) {
+    fs := NewFuelSystem()
+    fs.MainTank.CurrentLevel = 1000 // Set low fuel
+    initialFuel := fs.GetFuelAmount()
+    
+    fs.StartRefueling()
+    fs.Refuel(1 * time.Minute)
+    
+    if fs.GetFuelAmount() <= initialFuel {
+        t.Error("Fuel should increase during refueling")
     }
 }
