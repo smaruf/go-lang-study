@@ -3,6 +3,6 @@ module common
 go 1.16
 
 require (
-	google.golang.org/grpc v1.53.0
-	google.golang.org/protobuf v1.27.1
+	github.com/google/go-cmp v0.5.9 // indirect
+	google.golang.org/protobuf v1.28.1
 )

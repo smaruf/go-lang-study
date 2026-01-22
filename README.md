@@ -100,6 +100,7 @@ go-lang-study/
 ### 🌟 Full-Featured Projects
 | Project | Description | Concepts Covered |
 |---------|-------------|------------------|
+| [✈️ Remote Aircraft](src/remote-aircraft/) | Parametric aircraft design system for FPV drones & fixed-wing | Engineering calculations, CLI design, JSON export |
 | [📈 NASDAQ Trading Simulator](src/nasdaq-cse/) | Complete trading system with WebSocket, AI bot | REST API, WebSocket, GORM, Testing |
 | [🤖 GoBot Collection](src/gobot/) | IoT and bot integrations | Hardware control, Discord API, Environment variables |
 | [💰 Wallet Service](src/wallet/) | gRPC-based wallet system | gRPC, Protocol Buffers, Microservices |
