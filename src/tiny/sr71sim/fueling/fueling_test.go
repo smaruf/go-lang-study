@@ -58,7 +58,7 @@ func TestFuelConsumption(t *testing.T) {
 
 func TestRefueling(t *testing.T) {
     fs := NewFuelSystem()
-    fs.MainTank.CurrentLevel = 1000 // Set low fuel
+    fs.SetFuelLevel(1000) // Set low fuel using proper method
     initialFuel := fs.GetFuelAmount()
     
     fs.StartRefueling()

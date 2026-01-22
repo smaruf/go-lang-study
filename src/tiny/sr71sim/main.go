@@ -3,6 +3,7 @@ package main
 import (
     "bytes"
     "encoding/json"
+    "flag"
     "fmt"
     "log"
     "net/http"
@@ -32,12 +33,18 @@ var (
     startTime    time.Time
     uniqueTestID string
     logger       *log.Logger
+    simDuration  time.Duration
 )
 
 const storageURL = "http://example.com/storeSimulationData"
 
 func init() {
     logger = log.New(os.Stdout, "SR-71 Simulation: ", log.LstdFlags)
+    
+    // Parse command-line flags
+    duration := flag.Int("duration", 5, "Simulation duration in seconds")
+    flag.Parse()
+    simDuration = time.Duration(*duration) * time.Second
 }
 
 func generateUniqueTestID() string {
@@ -136,10 +143,11 @@ func PlotSimulation() {
 
 func main() {
     logger.Println("Start SR-71 Simulation")
+    logger.Printf("Simulation will run for %v", simDuration)
     StartSimulation()
     
-    // Run simulation for a duration
-    time.Sleep(5 * time.Second)
+    // Run simulation for configured duration
+    time.Sleep(simDuration)
     
     CloseSimulation()
     PlotSimulation()

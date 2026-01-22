@@ -48,6 +48,17 @@ func (fs *FuelSystem) GetFuelAmount() float64 {
 	return fs.MainTank.CurrentLevel
 }
 
+// SetFuelLevel sets the fuel level directly (for testing and initialization)
+func (fs *FuelSystem) SetFuelLevel(amount float64) {
+	if amount < 0 {
+		amount = 0
+	}
+	if amount > fs.MainTank.Capacity {
+		amount = fs.MainTank.Capacity
+	}
+	fs.MainTank.CurrentLevel = amount
+}
+
 // ConsumeFuel consumes fuel based on current consumption rate
 func (fs *FuelSystem) ConsumeFuel(duration time.Duration) {
 	hours := duration.Hours()
