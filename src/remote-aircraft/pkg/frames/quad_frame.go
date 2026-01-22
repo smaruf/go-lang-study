@@ -1,6 +1,8 @@
 package frames
 
 import (
+	"math"
+	
 	"github.com/smaruf/go-lang-study/src/remote-aircraft/pkg/materials"
 	"github.com/smaruf/go-lang-study/src/remote-aircraft/pkg/parts"
 )
@@ -78,7 +80,7 @@ func (q *QuadFrame) TotalWeight() float64 {
 func (c *CenterPlate) Weight() float64 {
 	// Simple circular plate volume: π * r² * h
 	radius := c.Diameter / 2
-	volume := 3.14159 * radius * radius * c.Thickness // mm³
+	volume := math.Pi * radius * radius * c.Thickness // mm³
 	volumeCm3 := volume / 1000.0
 	return volumeCm3 * c.Material.Density
 }

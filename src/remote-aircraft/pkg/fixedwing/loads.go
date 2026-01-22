@@ -1,5 +1,7 @@
 package fixedwing
 
+import "math"
+
 // Loads performs aerodynamic load calculations for fixed-wing aircraft
 type Loads struct {
 	Weight   float64 // Aircraft weight in grams
@@ -50,10 +52,10 @@ func (l *Loads) TurnRadius(bankAngle float64) float64 {
 	g := 9.81 // m/s²
 	
 	// Convert bank angle to radians
-	bankRad := bankAngle * 3.14159 / 180.0
+	bankRad := bankAngle * math.Pi / 180.0
 	
 	// Calculate turn radius
-	return (l.Airspeed * l.Airspeed) / (g * tan(bankRad))
+	return (l.Airspeed * l.Airspeed) / (g * math.Tan(bankRad))
 }
 
 // Analyze performs a complete load analysis
@@ -75,12 +77,4 @@ func (l *Loads) Analyze() map[string]interface{} {
 		"stall_speed_m/s":     l.Wing.StallSpeed(l.Weight),
 		"wing_loading_g/dm2":  l.Wing.WingLoading(l.Weight),
 	}
-}
-
-// Helper function for tan
-func tan(x float64) float64 {
-	// Simple tan implementation
-	// For small angles (in radians): tan(x) ≈ x
-	// For more accurate calculation, would need full trig library
-	return x // Simplified
 }
