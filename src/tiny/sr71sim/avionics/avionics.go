@@ -3,27 +3,37 @@ package avionics
 import (
 	"encoding/json"
 	"fmt"
+	"math"
 )
+
+// Coordinates represents GPS coordinates
+type Coordinates struct {
+	Latitude  float64 `json:"latitude"`
+	Longitude float64 `json:"longitude"`
+}
 
 // AvionicsState represents the state of aircraft avionics systems
 type AvionicsState struct {
-	Altitude            float64 `json:"altitude"`
-	Speed               float64 `json:"speed"`
-	NavigationSystem    string  `json:"navigation_system"`
-	CommunicationStatus string  `json:"communication_status"`
-	AutopilotStatus     string  `json:"autopilot_status"`
-	EngineChokeRecovery bool    `json:"engine_choke_recovery"`
-	CabinPressure       float64 `json:"cabin_pressure"`
-	GForceRecovery      bool    `json:"g_force_recovery"`
-	FuelLeachingRate    float64 `json:"fuel_leaching_rate"`
-	ExternalHeat        float64 `json:"external_heat"`
-	Temperature         float64 `json:"temperature"`
-	FuelSafety          bool    `json:"fuel_safety"`
+	Altitude            float64     `json:"altitude"`
+	Speed               float64     `json:"speed"`
+	Position            Coordinates `json:"position"`
+	NavigationSystem    string      `json:"navigation_system"`
+	CommunicationStatus string      `json:"communication_status"`
+	AutopilotStatus     string      `json:"autopilot_status"`
+	EngineChokeRecovery bool        `json:"engine_choke_recovery"`
+	CabinPressure       float64     `json:"cabin_pressure"`
+	GForceRecovery      bool        `json:"g_force_recovery"`
+	FuelLeachingRate    float64     `json:"fuel_leaching_rate"`
+	ExternalHeat        float64     `json:"external_heat"`
+	Temperature         float64     `json:"temperature"`
+	FuelSafety          bool        `json:"fuel_safety"`
 }
 
 // Avionics represents the avionics system controller
 type Avionics struct {
 	currentState AvionicsState
+	waypoints    []Coordinates
+	currentWP    int
 }
 
 // New creates a new Avionics instance with default values
@@ -32,6 +42,7 @@ func New() *Avionics {
 		currentState: AvionicsState{
 			Altitude:            0,
 			Speed:               0,
+			Position:            Coordinates{Latitude: 0, Longitude: 0},
 			NavigationSystem:    "GPS",
 			CommunicationStatus: "Active",
 			AutopilotStatus:     "Disengaged",
@@ -43,6 +54,8 @@ func New() *Avionics {
 			Temperature:         70.0,
 			FuelSafety:          true,
 		},
+		waypoints: []Coordinates{},
+		currentWP: 0,
 	}
 }
 
@@ -158,4 +171,122 @@ func TestJSON() (string, error) {
 	}
 
 	return string(jsonData), nil
+}
+
+// SetPosition sets the current GPS position
+func (a *Avionics) SetPosition(lat, lon float64) {
+	a.currentState.Position = Coordinates{Latitude: lat, Longitude: lon}
+}
+
+// GetPosition returns the current GPS position
+func (a *Avionics) GetPosition() Coordinates {
+	return a.currentState.Position
+}
+
+// SetWaypoints sets the flight waypoints
+func (a *Avionics) SetWaypoints(waypoints []Coordinates) {
+	a.waypoints = waypoints
+	a.currentWP = 0
+}
+
+// GetCurrentWaypoint returns the current waypoint
+func (a *Avionics) GetCurrentWaypoint() (Coordinates, bool) {
+	if a.currentWP >= len(a.waypoints) {
+		return Coordinates{}, false
+	}
+	return a.waypoints[a.currentWP], true
+}
+
+// NextWaypoint advances to the next waypoint
+func (a *Avionics) NextWaypoint() bool {
+	a.currentWP++
+	return a.currentWP < len(a.waypoints)
+}
+
+// DistanceToWaypoint calculates distance to current waypoint in nautical miles
+func (a *Avionics) DistanceToWaypoint() float64 {
+	if a.currentWP >= len(a.waypoints) {
+		return 0
+	}
+	return CalculateDistance(a.currentState.Position, a.waypoints[a.currentWP])
+}
+
+// CalculateDistance calculates distance between two coordinates in nautical miles
+// Using the Haversine formula
+func CalculateDistance(c1, c2 Coordinates) float64 {
+	const earthRadiusNM = 3440.065 // Earth's radius in nautical miles
+	
+	lat1 := c1.Latitude * math.Pi / 180
+	lat2 := c2.Latitude * math.Pi / 180
+	deltaLat := (c2.Latitude - c1.Latitude) * math.Pi / 180
+	deltaLon := (c2.Longitude - c1.Longitude) * math.Pi / 180
+	
+	a := math.Sin(deltaLat/2)*math.Sin(deltaLat/2) +
+		math.Cos(lat1)*math.Cos(lat2)*
+			math.Sin(deltaLon/2)*math.Sin(deltaLon/2)
+	c := 2 * math.Atan2(math.Sqrt(a), math.Sqrt(1-a))
+	
+	return earthRadiusNM * c
+}
+
+// NavigateToWaypoint updates position towards current waypoint
+// Returns true if waypoint is reached
+func (a *Avionics) NavigateToWaypoint(speedMph, timeMinutes float64) bool {
+	waypoint, ok := a.GetCurrentWaypoint()
+	if !ok {
+		return true // No more waypoints
+	}
+	
+	// Calculate distance we can travel in nautical miles
+	// 1 mph ≈ 0.868976 knots
+	speedKnots := speedMph * 0.868976
+	distanceNM := speedKnots * (timeMinutes / 60.0)
+	
+	distanceToWP := CalculateDistance(a.currentState.Position, waypoint)
+	
+	if distanceNM >= distanceToWP {
+		// We reached the waypoint
+		a.currentState.Position = waypoint
+		return true
+	}
+	
+	// Move towards waypoint
+	bearing := CalculateBearing(a.currentState.Position, waypoint)
+	newPos := CalculateDestination(a.currentState.Position, distanceNM, bearing)
+	a.currentState.Position = newPos
+	
+	return false
+}
+
+// CalculateBearing calculates the bearing from c1 to c2 in degrees
+func CalculateBearing(c1, c2 Coordinates) float64 {
+	lat1 := c1.Latitude * math.Pi / 180
+	lat2 := c2.Latitude * math.Pi / 180
+	deltaLon := (c2.Longitude - c1.Longitude) * math.Pi / 180
+	
+	y := math.Sin(deltaLon) * math.Cos(lat2)
+	x := math.Cos(lat1)*math.Sin(lat2) - math.Sin(lat1)*math.Cos(lat2)*math.Cos(deltaLon)
+	bearing := math.Atan2(y, x)
+	
+	return math.Mod(bearing*180/math.Pi+360, 360)
+}
+
+// CalculateDestination calculates a new position given start position, distance (NM), and bearing (degrees)
+func CalculateDestination(start Coordinates, distanceNM, bearing float64) Coordinates {
+	const earthRadiusNM = 3440.065
+	
+	lat1 := start.Latitude * math.Pi / 180
+	lon1 := start.Longitude * math.Pi / 180
+	brng := bearing * math.Pi / 180
+	
+	lat2 := math.Asin(math.Sin(lat1)*math.Cos(distanceNM/earthRadiusNM) +
+		math.Cos(lat1)*math.Sin(distanceNM/earthRadiusNM)*math.Cos(brng))
+	
+	lon2 := lon1 + math.Atan2(math.Sin(brng)*math.Sin(distanceNM/earthRadiusNM)*math.Cos(lat1),
+		math.Cos(distanceNM/earthRadiusNM)-math.Sin(lat1)*math.Sin(lat2))
+	
+	return Coordinates{
+		Latitude:  lat2 * 180 / math.Pi,
+		Longitude: lon2 * 180 / math.Pi,
+	}
 }
