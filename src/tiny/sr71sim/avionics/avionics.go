@@ -6,6 +6,13 @@ import (
 	"math"
 )
 
+const (
+	// EarthRadiusNM is Earth's radius in nautical miles
+	EarthRadiusNM = 3440.065
+	// MphToKnotsConversion converts miles per hour to knots
+	MphToKnotsConversion = 0.868976
+)
+
 // Coordinates represents GPS coordinates
 type Coordinates struct {
 	Latitude  float64 `json:"latitude"`
@@ -214,8 +221,6 @@ func (a *Avionics) DistanceToWaypoint() float64 {
 // CalculateDistance calculates distance between two coordinates in nautical miles
 // Using the Haversine formula
 func CalculateDistance(c1, c2 Coordinates) float64 {
-	const earthRadiusNM = 3440.065 // Earth's radius in nautical miles
-	
 	lat1 := c1.Latitude * math.Pi / 180
 	lat2 := c2.Latitude * math.Pi / 180
 	deltaLat := (c2.Latitude - c1.Latitude) * math.Pi / 180
@@ -226,7 +231,7 @@ func CalculateDistance(c1, c2 Coordinates) float64 {
 			math.Sin(deltaLon/2)*math.Sin(deltaLon/2)
 	c := 2 * math.Atan2(math.Sqrt(a), math.Sqrt(1-a))
 	
-	return earthRadiusNM * c
+	return EarthRadiusNM * c
 }
 
 // NavigateToWaypoint updates position towards current waypoint
@@ -238,8 +243,7 @@ func (a *Avionics) NavigateToWaypoint(speedMph, timeMinutes float64) bool {
 	}
 	
 	// Calculate distance we can travel in nautical miles
-	// 1 mph ≈ 0.868976 knots
-	speedKnots := speedMph * 0.868976
+	speedKnots := speedMph * MphToKnotsConversion
 	distanceNM := speedKnots * (timeMinutes / 60.0)
 	
 	distanceToWP := CalculateDistance(a.currentState.Position, waypoint)
@@ -273,17 +277,15 @@ func CalculateBearing(c1, c2 Coordinates) float64 {
 
 // CalculateDestination calculates a new position given start position, distance (NM), and bearing (degrees)
 func CalculateDestination(start Coordinates, distanceNM, bearing float64) Coordinates {
-	const earthRadiusNM = 3440.065
-	
 	lat1 := start.Latitude * math.Pi / 180
 	lon1 := start.Longitude * math.Pi / 180
 	brng := bearing * math.Pi / 180
 	
-	lat2 := math.Asin(math.Sin(lat1)*math.Cos(distanceNM/earthRadiusNM) +
-		math.Cos(lat1)*math.Sin(distanceNM/earthRadiusNM)*math.Cos(brng))
+	lat2 := math.Asin(math.Sin(lat1)*math.Cos(distanceNM/EarthRadiusNM) +
+		math.Cos(lat1)*math.Sin(distanceNM/EarthRadiusNM)*math.Cos(brng))
 	
-	lon2 := lon1 + math.Atan2(math.Sin(brng)*math.Sin(distanceNM/earthRadiusNM)*math.Cos(lat1),
-		math.Cos(distanceNM/earthRadiusNM)-math.Sin(lat1)*math.Sin(lat2))
+	lon2 := lon1 + math.Atan2(math.Sin(brng)*math.Sin(distanceNM/EarthRadiusNM)*math.Cos(lat1),
+		math.Cos(distanceNM/EarthRadiusNM)-math.Sin(lat1)*math.Sin(lat2))
 	
 	return Coordinates{
 		Latitude:  lat2 * 180 / math.Pi,

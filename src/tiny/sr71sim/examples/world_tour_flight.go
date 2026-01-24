@@ -10,6 +10,11 @@ import (
 	"github.com/smaruf/go-lang-study/src/tiny/sr71sim/fueling"
 )
 
+const (
+	// SpeedOfSoundMph is the speed of sound at sea level in mph
+	SpeedOfSoundMph = 767.0
+)
+
 // Location represents a named location with coordinates
 type Location struct {
 	Name      string
@@ -81,7 +86,7 @@ func main() {
 		speed := 500 + (alt / 200)
 		aircraft.Velocity = speed
 		avio.SetSpeed(float64(speed))
-		mach := float64(speed) / 767.0
+		mach := float64(speed) / SpeedOfSoundMph
 		eng.SetSpeed(mach)
 		
 		fuel.UpdateEngineType(mach)
@@ -153,7 +158,7 @@ func main() {
 		}
 		
 		// Simulate flight to waypoint
-		etaMinutes := distance / (float64(aircraft.Velocity) * 0.868976 / 60.0)
+		etaMinutes := distance / (float64(aircraft.Velocity) * avionics.MphToKnotsConversion / 60.0)
 		fmt.Printf("ETA: %.1f minutes\n", etaMinutes)
 		fmt.Println()
 		
@@ -260,10 +265,15 @@ func main() {
 	fmt.Println("\n=== World Tour Flight Complete! ===")
 	finalPos := avio.GetPosition()
 	fmt.Printf("Final Position: %.4f°, %.4f°\n", finalPos.Latitude, finalPos.Longitude)
-	fmt.Printf("Total Distance: ~%.0f nautical miles\n", 
-		avionics.CalculateDistance(
-			avionics.Coordinates{Latitude: locations[0].Latitude, Longitude: locations[0].Longitude},
-			finalPos) * float64(len(locations)-1) / 2)
+	
+	// Calculate total distance traveled through all waypoints
+	totalDistance := 0.0
+	for i := 0; i < len(locations)-1; i++ {
+		from := avionics.Coordinates{Latitude: locations[i].Latitude, Longitude: locations[i].Longitude}
+		to := avionics.Coordinates{Latitude: locations[i+1].Latitude, Longitude: locations[i+1].Longitude}
+		totalDistance += avionics.CalculateDistance(from, to)
+	}
+	fmt.Printf("Total Distance: ~%.0f nautical miles\n", totalDistance)
 	fmt.Println()
 	fmt.Println(fuel.GetStatus())
 	fmt.Println()
