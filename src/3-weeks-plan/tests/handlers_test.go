@@ -15,9 +15,18 @@ import (
 )
 
 func setupTestDB(t *testing.T) *database.DB {
-	dbPath := "/tmp/test_tasks.db"
-	// Remove existing test database
-	os.Remove(dbPath)
+	// Create a unique temporary database file
+	tmpFile, err := os.CreateTemp("", "test_tasks_*.db")
+	if err != nil {
+		t.Fatalf("Failed to create temp file: %v", err)
+	}
+	dbPath := tmpFile.Name()
+	tmpFile.Close()
+
+	// Ensure cleanup after test
+	t.Cleanup(func() {
+		os.Remove(dbPath)
+	})
 
 	db, err := database.New(dbPath)
 	if err != nil {
@@ -319,5 +328,102 @@ func TestGetStats(t *testing.T) {
 	total := int(statsData["total"].(float64))
 	if total != 3 {
 		t.Errorf("Expected total 3, got %d", total)
+	}
+}
+
+func TestCreateTaskValidation(t *testing.T) {
+	db := setupTestDB(t)
+	defer db.Close()
+
+	h := handlers.New(db)
+	router := mux.NewRouter()
+	router.HandleFunc("/api/tasks", h.CreateTask).Methods("POST")
+
+	// Test invalid priority
+	reqBody := models.CreateTaskRequest{
+		Title:    "Test Task",
+		Priority: "invalid",
+	}
+
+	body, _ := json.Marshal(reqBody)
+	req := httptest.NewRequest("POST", "/api/tasks", bytes.NewBuffer(body))
+	rec := httptest.NewRecorder()
+
+	router.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Errorf("Expected status 400 for invalid priority, got %d", rec.Code)
+	}
+
+	var response handlers.Response
+	json.NewDecoder(rec.Body).Decode(&response)
+
+	if response.Success {
+		t.Errorf("Expected success to be false for invalid priority")
+	}
+
+	// Test missing title
+	reqBody2 := models.CreateTaskRequest{
+		Priority: "high",
+	}
+
+	body2, _ := json.Marshal(reqBody2)
+	req2 := httptest.NewRequest("POST", "/api/tasks", bytes.NewBuffer(body2))
+	rec2 := httptest.NewRecorder()
+
+	router.ServeHTTP(rec2, req2)
+
+	if rec2.Code != http.StatusBadRequest {
+		t.Errorf("Expected status 400 for missing title, got %d", rec2.Code)
+	}
+}
+
+func TestUpdateTaskValidation(t *testing.T) {
+	db := setupTestDB(t)
+	defer db.Close()
+
+	// Create a task first
+	_, err := db.CreateTask(&models.CreateTaskRequest{
+		Title:    "Test Task",
+		Priority: "medium",
+	})
+	if err != nil {
+		t.Fatalf("Failed to create task: %v", err)
+	}
+
+	h := handlers.New(db)
+	router := mux.NewRouter()
+	router.HandleFunc("/api/tasks/{id}", h.UpdateTask).Methods("PUT")
+
+	// Test invalid status
+	invalidStatus := "invalid_status"
+	updateReq := models.UpdateTaskRequest{
+		Status: &invalidStatus,
+	}
+
+	body, _ := json.Marshal(updateReq)
+	req := httptest.NewRequest("PUT", "/api/tasks/1", bytes.NewBuffer(body))
+	rec := httptest.NewRecorder()
+
+	router.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Errorf("Expected status 400 for invalid status, got %d", rec.Code)
+	}
+
+	// Test invalid priority
+	invalidPriority := "invalid_priority"
+	updateReq2 := models.UpdateTaskRequest{
+		Priority: &invalidPriority,
+	}
+
+	body2, _ := json.Marshal(updateReq2)
+	req2 := httptest.NewRequest("PUT", "/api/tasks/1", bytes.NewBuffer(body2))
+	rec2 := httptest.NewRecorder()
+
+	router.ServeHTTP(rec2, req2)
+
+	if rec2.Code != http.StatusBadRequest {
+		t.Errorf("Expected status 400 for invalid priority, got %d", rec2.Code)
 	}
 }

@@ -53,6 +53,18 @@ func (h *Handler) CreateTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Validate priority if provided
+	if req.Priority != "" {
+		validPriorities := map[string]bool{"low": true, "medium": true, "high": true}
+		if !validPriorities[req.Priority] {
+			sendJSON(w, http.StatusBadRequest, Response{
+				Success: false,
+				Error:   "Priority must be one of: low, medium, high",
+			})
+			return
+		}
+	}
+
 	task, err := h.db.CreateTask(&req)
 	if err != nil {
 		sendJSON(w, http.StatusInternalServerError, Response{
@@ -142,6 +154,30 @@ func (h *Handler) UpdateTask(w http.ResponseWriter, r *http.Request) {
 			Error:   "Invalid request body",
 		})
 		return
+	}
+
+	// Validate status if provided
+	if req.Status != nil {
+		validStatuses := map[string]bool{"pending": true, "in_progress": true, "completed": true}
+		if !validStatuses[*req.Status] {
+			sendJSON(w, http.StatusBadRequest, Response{
+				Success: false,
+				Error:   "Status must be one of: pending, in_progress, completed",
+			})
+			return
+		}
+	}
+
+	// Validate priority if provided
+	if req.Priority != nil {
+		validPriorities := map[string]bool{"low": true, "medium": true, "high": true}
+		if !validPriorities[*req.Priority] {
+			sendJSON(w, http.StatusBadRequest, Response{
+				Success: false,
+				Error:   "Priority must be one of: low, medium, high",
+			})
+			return
+		}
 	}
 
 	task, err := h.db.UpdateTask(id, &req)
