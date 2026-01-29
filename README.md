@@ -106,6 +106,7 @@ go-lang-study/
 | [💰 Wallet Service](src/wallet/) | gRPC-based wallet system | gRPC, Protocol Buffers, Microservices |
 | [🎨 UI Applications](src/ui-app/) | Desktop GUI applications with Fyne | GUI, Fyne framework, Event handling |
 | [🔧 Embedded OS](src/embedded-os/) | Minimal OS for Raspberry Pi & Arduino | TinyGo, Embedded systems, GPIO, Sensors |
+| [⚙️ FreeRTOS Systems](src/tiny/freeRTOS/) | Robotics, rocketry, and renewable energy monitoring | Real-time OS, Motor control, Telemetry, MPPT |
 | [🚀 Advanced Patterns](src/advanced-patterns/) | Advanced Go patterns and best practices | Design patterns, Concurrency, Testing |
 
 ### 🌐 Web Development
@@ -164,7 +165,10 @@ go-lang-study/
 | Example | Description | Platform |
 |---------|-------------|----------|
 | [TinyGo Projects](src/tiny/) | Embedded systems examples | TinyGo, RPi, Arduino |
-| [FreeRTOS Examples](src/tiny/freeRTOS/) | Real-time OS examples | FreeRTOS |
+| [FreeRTOS Examples](src/tiny/freeRTOS/) | Real-time OS with robotics, rocketry & energy | FreeRTOS, TinyGo |
+| [🤖 Robotics Systems](src/tiny/freeRTOS/robotics/) | Motor control, sensors, autonomous navigation | RPi Pico, Arduino |
+| [🚀 Rocketry Control](src/tiny/freeRTOS/rocketry/) | Launch control, telemetry, flight computer | RPi Pico, Arduino |
+| [🔋 Energy Monitoring](src/tiny/freeRTOS/energy/) | Wind, solar, hydro, thermoelectric generators | RPi Pico, Arduino |
 | [SR-71 Simulator](src/tiny/sr71sim/) | Aircraft simulation | TinyGo |
 | [TinyGo Blinky](src/tinygo_blinky.go) | LED blink example | TinyGo |
 | [TinyGo PWM](src/tinygo_pwm.go) | PWM control example | TinyGo |
