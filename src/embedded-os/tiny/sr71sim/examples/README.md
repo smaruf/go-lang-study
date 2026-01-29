@@ -19,7 +19,7 @@ World tour flight simulation with GPS navigation and environmental variations.
 
 ```bash
 # Run basic flight simulation
-cd /home/runner/work/go-lang-study/go-lang-study/src/tiny/sr71sim
+cd /home/runner/work/go-lang-study/go-lang-study/src/embedded-os/tiny/sr71sim
 go run examples/basic_flight.go
 
 # Run world tour flight simulation

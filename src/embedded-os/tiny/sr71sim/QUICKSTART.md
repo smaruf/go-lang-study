@@ -11,10 +11,10 @@
 ```bash
 # Clone the repository
 git clone https://github.com/smaruf/go-lang-study.git
-cd go-lang-study/src/tiny/sr71sim
+cd go-lang-study/src/embedded-os/tiny/sr71sim
 
 # Initialize Go module (if not already done)
-go mod init github.com/smaruf/go-lang-study/src/tiny/sr71sim
+go mod init github.com/smaruf/go-lang-study/src/embedded-os/tiny/sr71sim
 
 # Install dependencies
 go get github.com/go-echarts/go-echarts/v2
@@ -82,9 +82,9 @@ package main
 
 import (
     "fmt"
-    "github.com/smaruf/go-lang-study/src/tiny/sr71sim/engine"
-    "github.com/smaruf/go-lang-study/src/tiny/sr71sim/avionics"
-    "github.com/smaruf/go-lang-study/src/tiny/sr71sim/flying"
+    "github.com/smaruf/go-lang-study/src/embedded-os/tiny/sr71sim/engine"
+    "github.com/smaruf/go-lang-study/src/embedded-os/tiny/sr71sim/avionics"
+    "github.com/smaruf/go-lang-study/src/embedded-os/tiny/sr71sim/flying"
 )
 
 func main() {
@@ -261,7 +261,7 @@ go vet ./...
 **1. Import errors**
 ```bash
 # Solution: Initialize module
-go mod init github.com/smaruf/go-lang-study/src/tiny/sr71sim
+go mod init github.com/smaruf/go-lang-study/src/embedded-os/tiny/sr71sim
 go mod tidy
 ```
 

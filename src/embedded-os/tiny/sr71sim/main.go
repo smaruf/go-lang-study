@@ -10,8 +10,8 @@ import (
     "os"
     "time"
     
-    "github.com/smaruf/go-lang-study/src/tiny/sr71sim/avionics"
-    "github.com/smaruf/go-lang-study/src/tiny/sr71sim/engine"
+    "github.com/smaruf/go-lang-study/src/embedded-os/tiny/sr71sim/avionics"
+    "github.com/smaruf/go-lang-study/src/embedded-os/tiny/sr71sim/engine"
 )
 
 type SimulationData struct {

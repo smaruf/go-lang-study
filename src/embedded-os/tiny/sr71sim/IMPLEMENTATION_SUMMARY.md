@@ -327,10 +327,10 @@ The simulator is now ready for:
 
 ### Test Results
 ```
-PASS: github.com/smaruf/go-lang-study/src/tiny/sr71sim/avionics
-PASS: github.com/smaruf/go-lang-study/src/tiny/sr71sim/engine
-PASS: github.com/smaruf/go-lang-study/src/tiny/sr71sim/flying
-PASS: github.com/smaruf/go-lang-study/src/tiny/sr71sim/fueling
+PASS: github.com/smaruf/go-lang-study/src/embedded-os/tiny/sr71sim/avionics
+PASS: github.com/smaruf/go-lang-study/src/embedded-os/tiny/sr71sim/engine
+PASS: github.com/smaruf/go-lang-study/src/embedded-os/tiny/sr71sim/flying
+PASS: github.com/smaruf/go-lang-study/src/embedded-os/tiny/sr71sim/fueling
 ```
 
 ## Platform Readiness Assessment
