@@ -1,0 +1,45 @@
+@startuml
+!define RECTANGLE class
+RECTANGLE SR71Engine {
+  +start()
+  +stop()
+}
+
+RECTANGLE AirIntake {
+  +compressAir()
+  +manageTransition(mach: Float)
+}
+
+RECTANGLE Turbojet {
+  +operateSubsonic()
+}
+
+RECTANGLE Ramjet {
+  +operateSupersonic()
+}
+
+RECTANGLE Scramjet {
+  +operateHypersonic()
+}
+
+RECTANGLE CombustionChamber {
+  +igniteFuel()
+}
+
+RECTANGLE Exhaust {
+  +expelGases()
+}
+
+SR71Engine --> AirIntake
+AirIntake --> Turbojet : if mach < 3.0
+AirIntake --> Ramjet : if 3.0 <= mach < 6.5
+AirIntake --> Scramjet : if mach >= 6.5
+Turbojet --> CombustionChamber
+Ramjet --> CombustionChamber
+Scramjet --> CombustionChamber
+Turbojet --> Turbine
+CombustionChamber --> Turbine : for Turbojet
+CombustionChamber --> Exhaust : for Ramjet/Scramjet
+Turbine --> Exhaust
+
+@enduml

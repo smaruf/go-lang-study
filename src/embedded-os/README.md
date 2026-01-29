@@ -61,9 +61,14 @@ embedded-os/
 │   ├── serial.go           # Serial communication
 │   ├── servo.go            # Servo motor control
 │   └── ultrasonic.go       # Ultrasonic distance sensor
-└── common/                  # Shared utilities
-    ├── gpio.go             # GPIO utilities
-    └── utils.go            # Common utilities
+├── tiny/                    # TinyGo projects
+│   ├── hello.go            # Hello world TinyGo
+│   ├── pwm_blinky.go       # PWM blinky example
+│   └── sr71sim/            # SR-71 flight simulator
+└── freeRTOS/               # FreeRTOS examples
+    ├── robotics/           # Robot control systems
+    ├── rocketry/           # Rocket launch control
+    └── energy/             # Energy monitoring systems
 ```
 
 ## Examples
@@ -280,8 +285,8 @@ tinygo build -size=short -target=pico blinky.go
 ## Examples from Other Projects
 
 Check these directories for more embedded examples:
-- `../tiny/` - Basic TinyGo examples
-- `../tiny/freeRTOS/` - FreeRTOS examples
+- `tiny/` - Basic TinyGo examples (SR-71 simulator)
+- `freeRTOS/` - FreeRTOS examples (robotics, rocketry, energy)
 - `../gobot/` - Robotics framework examples
 
 ## Contributing
