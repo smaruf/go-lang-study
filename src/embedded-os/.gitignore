@@ -1,0 +1,45 @@
+# Embedded OS Build Artifacts
+
+# Compiled binaries
+*.elf
+*.hex
+*.bin
+*.uf2
+*.out
+sr71sim
+*.exe
+
+# TinyGo build cache
+.tinygo-cache/
+
+# Debug files
+*.map
+*.lst
+*.sym
+
+# Object files
+*.o
+*.a
+
+# Temporary files
+*.tmp
+*.bak
+*~
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test coverage
+*.coverage
+coverage.txt
+coverage.html
+
+# Logs
+*.log

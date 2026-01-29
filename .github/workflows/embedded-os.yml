@@ -1,0 +1,194 @@
+name: Embedded OS CI/CD
+
+on:
+  push:
+    paths:
+      - 'src/embedded-os/**'
+      - '.github/workflows/embedded-os.yml'
+  pull_request:
+    paths:
+      - 'src/embedded-os/**'
+      - '.github/workflows/embedded-os.yml'
+
+jobs:
+  test-sr71sim:
+    name: Test SR-71 Simulator
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+      
+      - name: Run tests
+        working-directory: src/embedded-os/tiny/sr71sim
+        run: |
+          go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
+      
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./src/embedded-os/tiny/sr71sim/coverage.txt
+          flags: sr71sim
+  
+  build-tinygo-projects:
+    name: Build TinyGo Projects
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        target: [arduino, pico]
+        project:
+          - path: arduino/blinky.go
+            targets: [arduino]
+          - path: arduino/button.go
+            targets: [arduino]
+          - path: raspberry-pi/blinky.go
+            targets: [pico]
+          - path: raspberry-pi/button.go
+            targets: [pico]
+          - path: freeRTOS/blink_green.go
+            targets: [pico, arduino]
+        exclude:
+          - target: arduino
+            project:
+              path: raspberry-pi/blinky.go
+              targets: [pico]
+          - target: arduino
+            project:
+              path: raspberry-pi/button.go
+              targets: [pico]
+          - target: pico
+            project:
+              path: arduino/blinky.go
+              targets: [arduino]
+          - target: pico
+            project:
+              path: arduino/button.go
+              targets: [arduino]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Install TinyGo
+        run: |
+          wget https://github.com/tinygo-org/tinygo/releases/download/v0.30.0/tinygo_0.30.0_amd64.deb
+          sudo dpkg -i tinygo_0.30.0_amd64.deb
+      
+      - name: Verify TinyGo installation
+        run: tinygo version
+      
+      - name: Build project
+        working-directory: src/embedded-os
+        run: |
+          if [[ "${{ matrix.project.targets }}" == *"${{ matrix.target }}"* ]]; then
+            tinygo build -target=${{ matrix.target }} -o /tmp/output.hex ${{ matrix.project.path }}
+            echo "✓ Successfully built ${{ matrix.project.path }} for ${{ matrix.target }}"
+          fi
+  
+  lint:
+    name: Lint Code
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+      
+      - name: Run golangci-lint on SR-71 simulator
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+          working-directory: src/embedded-os/tiny/sr71sim
+  
+  integration-test:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: [test-sr71sim, build-tinygo-projects]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+      
+      - name: Run SR-71 simulator examples
+        working-directory: src/embedded-os/tiny/sr71sim
+        run: |
+          # Build main simulator
+          go build -v
+          
+          # Run with short duration for testing
+          timeout 10s ./sr71sim -duration=5 || [ $? -eq 124 ]
+          
+          echo "✓ SR-71 simulator integration test passed"
+      
+      - name: Build examples
+        working-directory: src/embedded-os/tiny/sr71sim
+        run: |
+          go build -v examples/basic_flight.go
+          go build -v examples/world_tour_flight.go
+          echo "✓ All example builds successful"
+  
+  documentation:
+    name: Check Documentation
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Check for required documentation
+        run: |
+          # Check for production deployment guide
+          if [ ! -f "src/embedded-os/PRODUCTION_DEPLOYMENT.md" ]; then
+            echo "❌ Missing PRODUCTION_DEPLOYMENT.md"
+            exit 1
+          fi
+          
+          # Check for project READMEs
+          required_readmes=(
+            "src/embedded-os/README.md"
+            "src/embedded-os/freeRTOS/README.md"
+            "src/embedded-os/tiny/README.md"
+            "src/embedded-os/tiny/sr71sim/README.md"
+          )
+          
+          for readme in "${required_readmes[@]}"; do
+            if [ ! -f "$readme" ]; then
+              echo "❌ Missing $readme"
+              exit 1
+            fi
+          done
+          
+          echo "✓ All required documentation present"
+  
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+      
+      - name: Run Gosec Security Scanner
+        uses: securego/gosec@master
+        with:
+          args: './src/embedded-os/tiny/sr71sim/...'
