@@ -10,10 +10,15 @@ on:
       - 'src/embedded-os/**'
       - '.github/workflows/embedded-os.yml'
 
+permissions:
+  contents: read
+
 jobs:
   test-sr71sim:
     name: Test SR-71 Simulator
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     
     steps:
       - name: Checkout code
@@ -38,6 +43,8 @@ jobs:
   build-tinygo-projects:
     name: Build TinyGo Projects
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     
     strategy:
       matrix:
@@ -94,6 +101,8 @@ jobs:
   lint:
     name: Lint Code
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     
     steps:
       - name: Checkout code
@@ -114,6 +123,8 @@ jobs:
     name: Integration Tests
     runs-on: ubuntu-latest
     needs: [test-sr71sim, build-tinygo-projects]
+    permissions:
+      contents: read
     
     steps:
       - name: Checkout code
@@ -145,6 +156,8 @@ jobs:
   documentation:
     name: Check Documentation
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     
     steps:
       - name: Checkout code
@@ -178,6 +191,8 @@ jobs:
   security-scan:
     name: Security Scan
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     
     steps:
       - name: Checkout code
