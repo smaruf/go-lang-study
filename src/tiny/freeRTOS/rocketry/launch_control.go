@@ -12,7 +12,7 @@ const (
 	// Ignition and staging pins
 	IGNITION_PIN   = machine.GPIO16
 	STAGE1_SEP_PIN = machine.GPIO17
-	STAGE2_SEP_PIN = machine.GPIO18
+	STAGE2_CTL_PIN = machine.GPIO18  // Controls both separation and ignition
 	PARACHUTE_PIN  = machine.GPIO19
 	
 	// Sensor pins
@@ -73,7 +73,7 @@ func NewRocketController() *RocketController {
 	// Configure ignition and separation pins
 	rc.ignitionPin = IGNITION_PIN
 	rc.stage1SepPin = STAGE1_SEP_PIN
-	rc.stage2SepPin = STAGE2_SEP_PIN
+	rc.stage2SepPin = STAGE2_CTL_PIN  // Dual purpose: separation and ignition
 	rc.parachutePin = PARACHUTE_PIN
 	
 	rc.ignitionPin.Configure(machine.PinConfig{Mode: machine.PinOutput})
@@ -140,7 +140,7 @@ func (rc *RocketController) SeparateStage1() {
 // IgniteStage2 ignites the second stage
 func (rc *RocketController) IgniteStage2() {
 	rc.state = StateStage2Ignition
-	rc.stage2SepPin.High() // Reusing pin for stage 2 ignition
+	rc.stage2SepPin.High() // Stage 2 control pin used for ignition
 	time.Sleep(3 * time.Second)
 	rc.stage2SepPin.Low()
 }

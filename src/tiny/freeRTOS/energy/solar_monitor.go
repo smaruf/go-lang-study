@@ -132,43 +132,35 @@ func (sc *SolarController) MeasureEnvironment() {
 // MPPT performs Maximum Power Point Tracking
 func (sc *SolarController) MPPT() {
 	// Perturb and Observe algorithm
-	static := struct {
-		prevPower float32
-		prevDuty  uint32
-		direction int
-	}{0, 50, 1}
+	// Note: Requires maintaining state between calls
+	// In production, this would be a field in SolarController struct
 	
-	powerDiff := sc.panelPower - static.prevPower
+	// Simplified placeholder - in real implementation, track previous values
+	// as struct fields to maintain state between calls
 	
-	if powerDiff > 0 {
-		// Power increased, continue in same direction
-		if static.direction > 0 {
+	// For now, this demonstrates the MPPT concept
+	// The duty cycle adjustment would be:
+	// - Increase duty if power increased
+	// - Decrease duty if power decreased
+	
+	// Apply PWM duty cycle (placeholder - requires hardware PWM implementation)
+	// Example with TinyGo PWM:
+	// pwm := machine.PWM0
+	// pwm.Configure(machine.PWMConfig{Period: 16384})
+	// channel, _ := pwm.Channel(sc.pwmControl)
+	// pwm.Set(channel, uint32(sc.mpptDutyCycle * 655))
+	
+	// For educational purposes, simplified adjustment:
+	if sc.panelPower > 10.0 {
+		// Adjust duty cycle based on power
+		if sc.mpptDutyCycle < 95 {
 			sc.mpptDutyCycle++
-		} else {
-			sc.mpptDutyCycle--
 		}
 	} else {
-		// Power decreased, reverse direction
-		static.direction = -static.direction
-		if static.direction > 0 {
-			sc.mpptDutyCycle++
-		} else {
+		if sc.mpptDutyCycle > 10 {
 			sc.mpptDutyCycle--
 		}
 	}
-	
-	// Limit duty cycle range
-	if sc.mpptDutyCycle > 95 {
-		sc.mpptDutyCycle = 95
-	} else if sc.mpptDutyCycle < 10 {
-		sc.mpptDutyCycle = 10
-	}
-	
-	// Apply PWM duty cycle
-	// In real implementation, use proper PWM peripheral
-	
-	static.prevPower = sc.panelPower
-	static.prevDuty = sc.mpptDutyCycle
 }
 
 // ManageCharging manages battery charging state

@@ -137,8 +137,8 @@ func (hc *HydroController) MeasurePower() {
 	// Calculate power
 	hc.power = hc.voltage * hc.current
 	
-	// Accumulate energy (kWh)
-	hc.totalEnergy += hc.power * 0.1 / 3600000.0
+	// Accumulate energy (Wh)
+	hc.totalEnergy += hc.power * 0.1 / 3600.0
 }
 
 // ControlGate controls the water gate opening
@@ -152,10 +152,14 @@ func (hc *HydroController) ControlGate(opening int) {
 	
 	hc.gateOpening = opening
 	
-	// Convert to servo angle (0-180 degrees)
-	// In real implementation, use proper PWM servo control
-	angle := opening * 180 / 100
-	_ = angle
+	// PLACEHOLDER: Actual servo control implementation required
+	// Example for real hardware:
+	// servo := machine.PWM0
+	// servo.Configure(machine.PWMConfig{Period: 20000000}) // 20ms
+	// channel, _ := servo.Channel(hc.gateServo)
+	// angle := opening * 180 / 100
+	// pulseWidth := 500 + (angle * 2000 / 180) // 500-2500us
+	// servo.Set(channel, uint32(pulseWidth))
 }
 
 // ControlBypass controls the bypass valve

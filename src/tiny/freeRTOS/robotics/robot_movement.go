@@ -55,8 +55,13 @@ func (m *Motor) SetSpeed(speed int) {
 		m.dirPin.Low()
 		speed = -speed
 	}
-	// Simplified PWM - in real implementation, use proper PWM API
-	_ = speed
+	// PLACEHOLDER: Actual PWM implementation required
+	// Example for real hardware:
+	// pwm := machine.PWM0
+	// pwm.Configure(machine.PWMConfig{Period: 16384})
+	// channel, _ := pwm.Channel(m.pwmPin)
+	// duty := uint32(speed * 655) // Convert 0-100 to 0-65535
+	// pwm.Set(channel, duty)
 }
 
 // NewDifferentialDrive creates a new differential drive robot
@@ -134,8 +139,13 @@ func NewSimpleSensor(trig, echo machine.Pin) *SimpleSensor {
 
 // GetDistance returns distance in cm (simplified)
 func (s *SimpleSensor) GetDistance() float32 {
-	// Simplified distance measurement
-	return 50.0 // Placeholder
+	// PLACEHOLDER: This returns a simulated value for demonstration
+	// In a real implementation, this would:
+	// 1. Send a 10us pulse to trigger pin
+	// 2. Measure echo pulse duration
+	// 3. Calculate distance = (duration * 0.0343) / 2
+	// See sensor_integration.go in robotics folder for actual implementation
+	return 50.0
 }
 
 // NewNavigationController creates a new navigation controller
@@ -234,7 +244,13 @@ func (d *DifferentialDrive) PatternSquare(sideLength int, speed int) {
 
 // PatternCircle moves robot in a circular pattern
 func (d *DifferentialDrive) PatternCircle(speed int, radius int) {
+	// Prevent division by zero
+	if radius <= -10 {
+		radius = -9 // Minimum safe radius
+	}
+	
 	// Adjust speeds for circular motion
+	// Assumes wheel base of 20cm between wheels
 	outerSpeed := speed
 	innerSpeed := speed * radius / (radius + 10) // Adjust for wheel base
 	
