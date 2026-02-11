@@ -17,6 +17,7 @@ Exploring Go features through practical implementations, modern best practices, 
 - [Advanced Topics](#-advanced-topics)
 - [Best Practices](#-best-practices)
 - [Contributing](#-contributing)
+- [References](#-references)
 
 ## 🚀 Quick Start
 
@@ -321,6 +322,10 @@ go test -bench=. ./...
 - Add tests for new features
 - Use environment variables for configuration
 - Format code with `gofmt`
+
+## 📚 References
+
+- [GoBooks](https://github.com/smaruf/GoBooks/tree/master) - Additional Go learning resources and books
 
 ## 📄 License
 
