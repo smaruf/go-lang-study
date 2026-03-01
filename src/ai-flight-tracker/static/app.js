@@ -43,15 +43,15 @@ function loadMapFlights() {
       markerCluster.clearLayers();
       const flights = data.flights || [];
       flights.forEach(f => {
-        if (f.lat == null || f.lon == null) return;
+        if (f.lat === null || f.lon === null) return;
         const marker = L.marker([f.lat, f.lon], { icon: planeIcon(f.heading) });
         marker.bindPopup(`
           <div class="flight-popup">
             <strong>${f.callsign || f.icao24}</strong>
             Country: ${f.origin_country || 'N/A'}<br>
-            Altitude: ${f.altitude != null ? f.altitude + ' m' : 'N/A'}<br>
-            Speed: ${f.velocity != null ? f.velocity + ' m/s' : 'N/A'}<br>
-            Heading: ${f.heading != null ? f.heading + '°' : 'N/A'}<br>
+            Altitude: ${f.altitude !== null ? f.altitude + ' m' : 'N/A'}<br>
+            Speed: ${f.velocity !== null ? f.velocity + ' m/s' : 'N/A'}<br>
+            Heading: ${f.heading !== null ? f.heading + '°' : 'N/A'}<br>
             ICAO24: ${f.icao24}
           </div>
         `);

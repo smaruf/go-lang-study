@@ -132,7 +132,11 @@ func (c *OpenSkyClient) FetchFlights(lamin, lamax, lomin, lomax *float64) ([]Fli
 		return []FlightState{}, nil
 	}
 	defer resp.Body.Close()
-	body, _ := io.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("OpenSky response read failed: %v", err)
+		return []FlightState{}, nil
+	}
 
 	var data struct {
 		States [][]interface{} `json:"states"`
@@ -172,7 +176,11 @@ func (c *OpenSkyClient) FetchFlightDetail(icao24 string) (*FlightState, error) {
 		return nil, nil
 	}
 	defer resp.Body.Close()
-	body, _ := io.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("OpenSky detail response read failed: %v", err)
+		return nil, nil
+	}
 
 	var data struct {
 		States [][]interface{} `json:"states"`

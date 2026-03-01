@@ -26,6 +26,7 @@ type cachedEntry struct {
 // PricingService calculates prices with a TTL cache.
 type PricingService struct {
 	mu       sync.RWMutex
+	rng      *rand.Rand
 	cache    map[string]cachedEntry
 	cacheTTL time.Duration
 }
@@ -33,6 +34,7 @@ type PricingService struct {
 // NewPricingService creates a new pricing service.
 func NewPricingService(cacheTTLSecs int) *PricingService {
 	return &PricingService{
+		rng:      rand.New(rand.NewSource(time.Now().UnixNano())), //nolint:gosec
 		cache:    make(map[string]cachedEntry),
 		cacheTTL: time.Duration(cacheTTLSecs) * time.Second,
 	}
@@ -77,8 +79,11 @@ func (p *PricingService) Calculate(routeCode string, route Route, departureDate 
 	case days > 60:
 		base *= 0.85
 	}
-	// Apply ±5% random variation
-	price := base * (0.95 + rand.Float64()*0.10)
+	// Apply ±5% random variation (protected by the write lock held at this point)
+	p.mu.Lock()
+	variation := p.rng.Float64()
+	p.mu.Unlock()
+	price := base * (0.95 + variation*0.10)
 	price = float64(int(price*100)) / 100 // round to 2 decimal places
 
 	result := PriceResult{
