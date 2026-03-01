@@ -35,7 +35,7 @@ func NewLogBuffer() *LogBuffer {
 
 // Write implements io.Writer so it can be used as a log output.
 // The mutex protects buf. The channel send is outside the mutex intentionally:
-// the channel is unbuffered-free (buffered, never closed), so the send is
+// the channel is buffered (never closed), so the non-blocking send is
 // independently safe without holding the lock.
 func (lb *LogBuffer) Write(p []byte) (n int, err error) {
 	lb.mu.Lock()
@@ -175,7 +175,9 @@ func withCORS(next http.Handler, origins string) http.Handler {
 func jsonResp(w http.ResponseWriter, status int, data interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	json.NewEncoder(w).Encode(data) //nolint:errcheck
+	if err := json.NewEncoder(w).Encode(data); err != nil {
+		log.Printf("jsonResp encode error: %v", err)
+	}
 }
 
 func parseFloatParam(r *http.Request, key string) *float64 {
