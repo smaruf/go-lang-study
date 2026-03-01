@@ -79,3 +79,34 @@ All settings are via environment variables (see `.env.example`):
 ```bash
 go test ./...
 ```
+
+## GUI Application
+
+A cross-platform native desktop GUI (built with [Fyne v2](https://fyne.io)) is available at `cmd/gui/`. It provides:
+
+- **Server tab** — start/stop the HTTP server, set port, open the web UI in a browser
+- **Configuration tab** — edit OpenSky, Ollama, cache TTL, and CORS settings (applied on next start)
+- **Deploy tab** — build/run/stop Docker containers and docker-compose services
+- **Logs tab** — real-time server log output
+
+### Prerequisites (Linux/WSL)
+
+```bash
+sudo apt-get install libgl1-mesa-dev xorg-dev
+```
+
+### Run the GUI
+
+```bash
+cd src/ai-flight-tracker
+go run ./cmd/gui
+```
+
+### Build a native binary
+
+```bash
+go build -o flight-tracker-gui ./cmd/gui
+./flight-tracker-gui
+```
+
+Supported platforms: Windows, macOS, Linux (including WSL with a display), Android, iOS.
