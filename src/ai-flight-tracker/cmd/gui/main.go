@@ -92,12 +92,17 @@ func (ui *appUI) buildServerTab() fyne.CanvasObject {
 
 	stopBtn = widget.NewButtonWithIcon("Stop Server", theme.MediaStopIcon(), func() {
 		if ui.srv != nil {
-			ui.srv.Stop() //nolint:errcheck
+			if err := ui.srv.Stop(); err != nil {
+				statusLabel.SetText("● Stop error: " + err.Error())
+				statusLabel.Importance = widget.WarningImportance
+			}
 			ui.srv = nil
 		}
 		ui.running = false
-		statusLabel.SetText("● Stopped")
-		statusLabel.Importance = widget.DangerImportance
+		if statusLabel.Importance != widget.WarningImportance {
+			statusLabel.SetText("● Stopped")
+			statusLabel.Importance = widget.DangerImportance
+		}
 		urlLabel.SetText("")
 		startBtn.Enable()
 		stopBtn.Disable()
@@ -212,6 +217,8 @@ func (ui *appUI) buildDeployTab() fyne.CanvasObject {
 		out.SetText(out.Text + msg)
 	}
 
+	// dockerCmd and composeCmd only receive hardcoded string literals from the
+	// buttons defined in this function, so there is no command-injection risk.
 	dockerCmd := func(args ...string) {
 		appendOut(fmt.Sprintf("$ docker %s\n", strings.Join(args, " ")))
 		go func() {
@@ -313,6 +320,8 @@ func (ui *appUI) forwardLogs() {
 }
 
 // openBrowser opens a URL in the system's default browser.
+// Errors are silently ignored because browser launch failures are non-critical
+// and the URL is already visible in the Server tab for manual opening.
 func openBrowser(rawURL string) {
 	var cmd *exec.Cmd
 	switch runtime.GOOS {
@@ -323,5 +332,8 @@ func openBrowser(rawURL string) {
 	default:
 		cmd = exec.Command("xdg-open", rawURL)
 	}
-	cmd.Start() //nolint:errcheck
+	if err := cmd.Start(); err != nil {
+		// Non-fatal: URL is shown in the Server tab so the user can copy it manually.
+		_ = err
+	}
 }

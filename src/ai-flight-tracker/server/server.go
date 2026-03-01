@@ -34,6 +34,9 @@ func NewLogBuffer() *LogBuffer {
 }
 
 // Write implements io.Writer so it can be used as a log output.
+// The mutex protects buf. The channel send is outside the mutex intentionally:
+// the channel is unbuffered-free (buffered, never closed), so the send is
+// independently safe without holding the lock.
 func (lb *LogBuffer) Write(p []byte) (n int, err error) {
 	lb.mu.Lock()
 	lb.buf.Write(p)
